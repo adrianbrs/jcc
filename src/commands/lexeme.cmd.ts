@@ -1,6 +1,6 @@
-import { ICommand } from "src/interfaces/cmd.interface";
-import { JCCLexGenerator } from "src/modules/lex-generator";
-import { JCCReader } from "src/modules/reader";
+import { ICommand } from "@/interfaces/cmd.interface";
+import { JCCLexGenerator } from "@/modules/lex-generator";
+import { JCCReader } from "@/modules/reader";
 
 interface ILexemeOptions {
   encoding: BufferEncoding;

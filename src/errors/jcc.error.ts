@@ -1,4 +1,4 @@
-import { IJCCReaderState } from "src/interfaces/jcc-reader.interface";
+import { IJCCReaderState } from "@/interfaces/jcc-reader.interface";
 
 export interface JCCErrorOptions extends Partial<IJCCReaderState> {
   cause?: Error;
