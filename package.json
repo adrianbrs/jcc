@@ -1,0 +1,28 @@
+{
+  "name": "@adrianbrs/jcc",
+  "version": "1.0.0",
+  "description": "Case study of a minimalist C compiler built in JavaScript",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start:dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "compiler",
+    "gcc",
+    "c",
+    "typescript",
+    "case study"
+  ],
+  "author": "Adrian Cerbaro <adrian@cerbaro.dev>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.8.4",
+    "tsx": "^3.13.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "commander": "^11.0.0"
+  }
+}
