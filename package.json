@@ -7,7 +7,8 @@
     "build": "tsc && tsc-alias",
     "build:watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
     "start:dev": "NODE_ENV=development tsx src/index.ts",
-    "start": "jcc"
+    "start": "jcc",
+    "jcc": "./bin/jcc.js"
   },
   "bin": {
     "jcc": "./bin/jcc.js"
