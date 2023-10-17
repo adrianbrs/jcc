@@ -1,19 +1,26 @@
-import { IJCCReaderState } from "@/interfaces/jcc-reader.interface";
+import { IJCCFileState } from "@/interfaces/file-state.interface";
 
-export interface JCCErrorOptions extends Partial<IJCCReaderState> {
+export interface IJCCErrorOptions extends Partial<IJCCFileState> {
+  /**
+   * Selected range of bytes to highlight, counted relative to the current byte.\
+   * Can be negative or positive.
+   */
+  selection?: number;
   cause?: Error;
   details?: any;
 }
 
-export class JCCError extends Error implements JCCErrorOptions {
+export class JCCError extends Error implements IJCCErrorOptions {
   filepath?: string | undefined;
   line?: number | undefined;
   column?: number | undefined;
   cause?: Error | undefined;
   encoding?: BufferEncoding | undefined;
   details?: any;
+  byte?: number | undefined;
+  selection?: number | undefined;
 
-  constructor(message: string, options?: JCCErrorOptions) {
+  constructor(message: string, options?: IJCCErrorOptions) {
     super(message);
     this.name = this.constructor.name;
 
@@ -34,6 +41,12 @@ export class JCCError extends Error implements JCCErrorOptions {
       ...(typeof this.line !== "undefined" && { line: this.line }),
       ...(typeof this.column !== "undefined" && { column: this.column }),
       ...(typeof this.details !== "undefined" && { details: this.details }),
+      ...(typeof this.selection !== "undefined" && {
+        selection: this.selection,
+      }),
+      ...(typeof this.byte !== "undefined" && {
+        bytesRead: this.byte,
+      }),
       ...(this.cause && { cause: this.cause }),
     };
   }
