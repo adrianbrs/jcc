@@ -4,7 +4,9 @@ import {
   IJCCLexeme,
 } from "../interfaces/jcc-lex-generator.interface";
 
-export class JCCLexGenerator implements IJCCLexGenerator {
+export class JCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
+  implements IJCCLexGenerator<TLexeme>
+{
   get reader() {
     return this._options.reader;
   }
@@ -13,9 +15,9 @@ export class JCCLexGenerator implements IJCCLexGenerator {
     return this._options.consumer;
   }
 
-  constructor(private readonly _options: IJCCLexGeneratorOptions) {}
+  constructor(private readonly _options: IJCCLexGeneratorOptions<TLexeme>) {}
 
-  next(): Promise<IteratorResult<IJCCLexeme>> {
+  next(): Promise<IteratorResult<TLexeme>> {
     return this.reader.next().then(async ({ done, value: char }) => {
       if (done) {
         return { done: true, value: null };

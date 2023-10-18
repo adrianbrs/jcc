@@ -15,6 +15,7 @@ export class JCCReader implements IJCCReader {
     byte: 0,
   };
   private readonly _readStream: ReadStream;
+  private readonly _lineColMap = new Map<number, number>();
 
   get state() {
     return { ...this._state };
@@ -97,6 +98,33 @@ export class JCCReader implements IJCCReader {
     });
   }
 
+  unshift(chunk: string | Buffer) {
+    if (this._state.byte === 0) {
+      this.raise("Cannot unshift before reading");
+    }
+
+    this._readStream.unshift(chunk);
+    this._state.byte -= chunk.length;
+
+    if (chunk === "\n") {
+      this._state.line--;
+      this._state.column = this._lineColMap.get(this._state.line) ?? 1;
+    } else if (chunk !== "\r") {
+      this._state.column--;
+    }
+  }
+
+  peek(): Promise<string> {
+    return this.next().then(({ done, value }) => {
+      if (done) {
+        return "";
+      }
+
+      this.unshift(value);
+      return value;
+    });
+  }
+
   next(): Promise<IteratorResult<string>> {
     return this.readable().then((stream) => {
       if (stream.closed || !stream.readable) {
@@ -114,6 +142,7 @@ export class JCCReader implements IJCCReader {
 
       if (char !== "\r") {
         if (char === "\n") {
+          this._lineColMap.set(this._state.line, this._state.column);
           this._state.line++;
           this._state.column = 1;
         } else {

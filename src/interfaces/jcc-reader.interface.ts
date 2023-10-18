@@ -22,6 +22,17 @@ export interface IJCCReader extends AsyncIterableIterator<string> {
   readonly encoding: BufferEncoding;
 
   /**
+   * Pushes a chunk of data back to the front of the stream.
+   */
+  unshift(chunk: string): void;
+
+  /**
+   * Returns a promise that resolves to the next character in the stream
+   * without advancing the stream.
+   */
+  peek(): Promise<string>;
+
+  /**
    * Returns a promise that resolves to a readable stream when the stream is
    * ready to be read.
    */

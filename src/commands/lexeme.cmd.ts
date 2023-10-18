@@ -1,5 +1,6 @@
+import { CLexConsumer } from "@/bindings/c.lex-consumer";
+import { CLexemeType } from "@/bindings/interfaces/lexeme-type.interface";
 import { ICommand } from "@/interfaces/cmd.interface";
-import { JCCLexConsumer } from "@/modules/lex-consumer";
 import { JCCLexGenerator } from "@/modules/lex-generator";
 import { JCCReader } from "@/modules/reader";
 
@@ -27,15 +28,13 @@ export const lexeme: ICommand = (parent) => {
       encoding: options.encoding,
     });
 
-    const lexConsumer = new JCCLexConsumer();
-
     const lexGenerator = new JCCLexGenerator({
       reader,
-      consumer: lexConsumer,
+      consumer: new CLexConsumer(),
     });
 
     for await (const lexeme of lexGenerator) {
-      console.log(`<${lexeme.value}>`);
+      console.log(`<${lexeme.type}, ${CLexemeType[lexeme.type]}, ${JSON.stringify(lexeme.value)}>`);
     }
   });
 };
