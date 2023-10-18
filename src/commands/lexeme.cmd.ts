@@ -34,7 +34,11 @@ export const lexeme: ICommand = (parent) => {
     });
 
     for await (const lexeme of lexGenerator) {
-      console.log(`<${lexeme.type}, ${CLexemeType[lexeme.type]}, ${JSON.stringify(lexeme.value)}>`);
+      console.log(
+        `<${lexeme.id}, ${CLexemeType.getName(lexeme.type)}, ${
+          lexeme.name
+        }, ${JSON.stringify(lexeme.value)}>`
+      );
     }
   });
 };

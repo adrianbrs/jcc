@@ -99,17 +99,24 @@ export class JCCReader implements IJCCReader {
   }
 
   unshift(chunk: string | Buffer) {
+    if (!chunk.length) {
+      return;
+    }
     if (this._state.byte === 0) {
       this.raise("Cannot unshift before reading");
+    }
+    if (chunk.length > 1) {
+      this.raise("Cannot unshift more than one byte at a time");
     }
 
     this._readStream.unshift(chunk);
     this._state.byte -= chunk.length;
 
-    if (chunk === "\n") {
+    const str = chunk instanceof Buffer ? chunk.toString(this.encoding) : chunk;
+    if (str === "\n") {
       this._state.line--;
       this._state.column = this._lineColMap.get(this._state.line) ?? 1;
-    } else if (chunk !== "\r") {
+    } else if (str !== "\r") {
       this._state.column--;
     }
   }

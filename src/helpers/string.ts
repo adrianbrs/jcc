@@ -33,3 +33,7 @@ export function isNumberSign(char: string): boolean {
 export function isNumberSeparator(char: string): boolean {
   return char === ".";
 }
+
+export function isWhitespace(char: string): boolean {
+  return /\s/.test(char);
+}

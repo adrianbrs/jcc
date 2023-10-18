@@ -4,7 +4,10 @@ export interface IJCCLexConsumer<TLexeme extends IJCCLexeme = IJCCLexeme> {
   /**
    * Consumes characters from the reader to produce a lexeme.
    */
-  consume(char: string, reader: IJCCReader): TLexeme | Promise<TLexeme>;
+  consume(
+    char: string,
+    reader: IJCCReader
+  ): TLexeme | false | Promise<TLexeme | false>;
 }
 
 export interface IJCCLexGeneratorOptions<

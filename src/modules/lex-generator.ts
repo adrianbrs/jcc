@@ -25,6 +25,10 @@ export class JCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
 
       const lexeme = await this.consumer.consume(char, this.reader);
 
+      if (!lexeme) {
+        return this.next();
+      }
+
       return {
         done: false,
         value: lexeme,

@@ -3,81 +3,43 @@ import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface";
 import { CLexemeType } from "./interfaces/lexeme-type.interface";
 import {
   isDigit,
-  isHexDigit,
   isLetter,
   isNumberSeparator,
   isNumberSign,
 } from "@/helpers/string";
 
-export const C_NUMBER_BASES = {
-  b: 2,
-  x: 16,
-};
-
-export type CNumberBase = keyof typeof C_NUMBER_BASES;
-
-export function isCNumberBase(char: string): char is CNumberBase {
-  return char in C_NUMBER_BASES;
-}
-
 export class CNumberLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<ICLexeme> {
     let number = char;
     let isFloat = isNumberSeparator(char);
-    let base = char == "0" ? 8 : 0;
+    let isScientificNotation = false;
+    let prev = char;
 
     for await (let next of reader) {
       next = next.toLowerCase();
 
-      // OCTAL EDGE CASE
-      if (!base && next === "0") {
-        base = 8;
-      }
-
-      if (!base || base === 8) {
-        if (next === "x") {
-          base = 16;
-        } else if (next === "b") {
-          base = 2;
-        }
-      }
-
-      // NORMAL DIGIT
-      if (isDigit(next) || isLetter(next)) {
-        // BASE VALIDATION
-        if (base == 8 && next.charCodeAt(0) > "7".charCodeAt(0)) {
-          reader.raise(`Invalid octal digit "${next}"`);
-        } else if (base == 2 && next > "1") {
-          reader.raise(`Invalid binary digit "${next}"`);
-        } else if (base == 16 && !isDigit(next) && next.toLowerCase() > "f") {
-          reader.raise(`Invalid hexadecimal digit "${next}"`);
-        }
-
-        // NUMBER BASE SEPARATOR
-      } else if (isCNumberBase(next)) {
-        if (base) {
-          reader.raise(`Unexpected number base indicator "${next}"`);
-        }
-        base = C_NUMBER_BASES[next];
-
-        // FLOAT SEPARATOR
+      // Check for scientific notation, e.g. 1e+10
+      if (prev === "e" && isNumberSign(next) && !isScientificNotation) {
+        isScientificNotation = true;
       } else if (isNumberSeparator(next)) {
         if (isFloat) {
-          reader.raise(`Unexpected number separator "${next}"`);
+          reader.raise(`Too many floating point separator "${next}"`);
         }
         isFloat = true;
-      } else {
+      } else if (!(isDigit(next) || isLetter(next))) {
         reader.unshift(next);
         break;
       }
 
       number += next;
+      prev = next;
     }
 
-    const type = CLexemeType.NUMBER;
+    const type = CLexemeType.NUMBER_LITERAL;
     return {
       type,
       id: type,
+      name: CLexemeType.getName(type),
       value: number,
     };
   }

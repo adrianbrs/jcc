@@ -7,6 +7,7 @@
     "build": "tsc && tsc-alias",
     "build:watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
     "start:dev": "NODE_ENV=development tsx src/index.ts",
+    "clang:lex": "clang -fsyntax-only -Xclang -dump-tokens",
     "start": "jcc",
     "jcc": "./bin/jcc.js"
   },

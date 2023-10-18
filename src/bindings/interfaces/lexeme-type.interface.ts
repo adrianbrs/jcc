@@ -1,12 +1,14 @@
 export enum CLexemeType {
   KEYWORD = 1000,
-  NUMBER = 2000,
-  STRING = 2001,
-  IDENTIFIER = 2002,
-  TOKEN = 2100,
-  MATH_TOKEN = 2200,
-  ATTRIB_TOKEN = 2300,
-  RELATIONAL_TOKEN = 2400,
-  LOGIC_TOKEN = 2500,
-  BITWISE_TOKEN = 2600,
+  IDENTIFIER = 2000,
+  NUMBER_LITERAL = 3000,
+  STRING_LITERAL = 4000,
+  CHAR_LITERAL = 4001,
+  TOKEN = 5000,
+}
+
+export namespace CLexemeType {
+  export function getName(type: CLexemeType): string {
+    return CLexemeType[type].toLowerCase();
+  }
 }
