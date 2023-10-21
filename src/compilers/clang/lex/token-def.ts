@@ -1,5 +1,3 @@
-import { CLexemeType } from "./interfaces/lexeme-type.interface";
-
 export interface ICTokenMeta {
   readonly index: number;
   readonly name?: string;

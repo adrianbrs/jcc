@@ -1,5 +1,5 @@
-import { CLexConsumer } from "@/bindings/c.lex-consumer";
-import { CLexemeType } from "@/bindings/interfaces/lexeme-type.interface";
+import { CLexConsumer } from "@/compilers/clang/lex/c.lex-consumer";
+import { CLexemeType } from "@/compilers/clang/lex/interfaces/lexeme-type.interface";
 import { ICommand } from "@/interfaces/cmd.interface";
 import { JCCLexGenerator } from "@/modules/lex-generator";
 import { JCCReader } from "@/modules/reader";
