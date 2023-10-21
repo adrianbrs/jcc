@@ -16,7 +16,10 @@ export class CStringLexConsumer implements ICLexConsumer {
       value += next;
 
       if (next === char) {
-        break;
+        // Check if the quote is escaped
+        if (value[value.length - 2] !== "\\") {
+          break;
+        }
       }
     }
 
