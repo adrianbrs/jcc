@@ -13,13 +13,16 @@ import { CCommentLexConsumer } from "./c-comment.lex-consumer";
 import { C_TOKENS } from "./tokens/tokens";
 import { CDirectivesLexConsumer } from "./c-directives.lex-consumer";
 import { CStringLexConsumer } from "./c-string.lex-consumer";
+import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface";
 
 export class CLexConsumer implements ICLexConsumer {
-  wordConsumer = new CWordLexConsumer();
+  constants: ICPreprocessorConstantMap = new Map();
+
+  directivesConsumer = new CDirectivesLexConsumer(this.constants);
+  wordConsumer = new CWordLexConsumer(this.constants);
   numberConsumer = new CNumberLexConsumer();
   commentConsumer = new CCommentLexConsumer();
   tokensConsumer = new CTokensLexConsumer();
-  directivesConsumer = new CDirectivesLexConsumer();
   stringConsumer = new CStringLexConsumer();
 
   async consume(char: string, reader: IJCCReader): Promise<ICLexeme | false> {

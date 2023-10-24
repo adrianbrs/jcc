@@ -1,13 +1,10 @@
 import { IJCCReader } from "./jcc-reader.interface";
 
-export interface IJCCLexConsumer<TLexeme extends IJCCLexeme = IJCCLexeme> {
+export interface IJCCLexConsumer<R = IJCCLexeme> {
   /**
    * Consumes characters from the reader to produce a lexeme.
    */
-  consume(
-    char: string,
-    reader: IJCCReader
-  ): TLexeme | false | Promise<TLexeme | false>;
+  consume(char: string, reader: IJCCReader): R | false | Promise<R | false>;
 }
 
 export interface IJCCLexGeneratorOptions<
@@ -15,10 +12,10 @@ export interface IJCCLexGeneratorOptions<
 > {
   reader: IJCCReader;
   consumer: IJCCLexConsumer<TLexeme>;
+  stopOnError?: boolean;
 }
 
 export interface IJCCLexeme {
-  id: number;
   value: string;
 }
 

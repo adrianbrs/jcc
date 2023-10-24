@@ -16,15 +16,56 @@ export interface IJCCReaderOptions {
   encoding?: BufferEncoding;
 }
 
+export interface IJCCReaderLineInfo {
+  byteStart: number;
+  byteEnd: number;
+}
+
 export interface IJCCReader extends AsyncIterableIterator<string> {
   readonly state: IJCCFileState;
   readonly filepath: string;
   readonly encoding: BufferEncoding;
 
   /**
-   * Pushes a chunk of data back to the front of the stream.
+   * Returns information about the given line.\
+   * **The line must be already read!**
    */
-  unshift(chunk: string): void;
+  getLineInfo(line: number): IJCCReaderLineInfo;
+
+  /**
+   * Returns information about the line that contains the given byte.\
+   * **The byte must be already read!**
+   */
+  getLineFromByte(byte: number): number;
+
+  /**
+   * Returns the line and column number of the given byte.\
+   * **The byte must be already read!**
+   */
+  getLineAndColumn(byte: number): [number, number];
+
+  /**
+   * Returns the byte at the given line and column number.\
+   * **The line and column must be already read!**
+   */
+  getByte(line: number, column?: number): number;
+
+  /**
+   * Returns the number of columns in the given line.\
+   * **The line must be already read!**
+   */
+  getColumns(line: number): number;
+
+  /**
+   * Returns the number of lines read.\
+   * **Lines are counted even before they are completely read!**
+   */
+  getReadLineCount(): number;
+
+  /**
+   * Pushes data back to the front of the stream.
+   */
+  unshift(data: string): void;
 
   /**
    * Returns a promise that resolves to the next character in the stream

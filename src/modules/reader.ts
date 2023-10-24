@@ -2,6 +2,7 @@ import { ReadStream, createReadStream, existsSync } from "fs";
 import { JCCError, IJCCErrorOptions } from "../errors/jcc.error";
 import {
   IJCCReader,
+  IJCCReaderLineInfo,
   IJCCReaderOptions,
 } from "../interfaces/jcc-reader.interface";
 import { IJCCFileState } from "@/interfaces/file-state.interface";
@@ -15,7 +16,7 @@ export class JCCReader implements IJCCReader {
     byte: 0,
   };
   private readonly _readStream: ReadStream;
-  private readonly _lineColMap = new Map<number, number>();
+  private readonly _lineMap = new Map<number, IJCCReaderLineInfo>();
 
   get state() {
     return { ...this._state };
@@ -41,12 +42,20 @@ export class JCCReader implements IJCCReader {
     this._readStream = createReadStream(this.filepath);
   }
 
-  makeError(
-    message: string,
-    options?: Omit<IJCCErrorOptions, keyof IJCCFileState> | undefined
-  ): JCCError {
+  makeError(message: string, options?: IJCCErrorOptions | undefined): JCCError {
+    const state = this.state;
+
+    const [line, column] =
+      typeof options?.byteStart !== "undefined"
+        ? this.getLineAndColumn(options.byteStart)
+        : [state.line, state.column];
+
+    console.log(line, column, options?.byteStart);
+
     return new JCCError(message, {
-      ...this.state,
+      state,
+      line,
+      column,
       ...options,
     });
   }
@@ -56,6 +65,75 @@ export class JCCReader implements IJCCReader {
     options?: Omit<IJCCErrorOptions, keyof IJCCFileState> | undefined
   ): never {
     throw this.makeError(message, options);
+  }
+
+  getLineInfo(line: number): IJCCReaderLineInfo {
+    if (line <= 0) {
+      this.raise("line number cannot be less than or equal to 0");
+    }
+    if (line > this.getReadLineCount()) {
+      this.raise("line not read");
+    }
+
+    return this._lineMap.get(line)!;
+  }
+
+  getLineFromByte(byte: number): number {
+    if (byte < 0) {
+      this.raise("cannot get line info of negative byte");
+    }
+    if (byte > this._state.byte) {
+      this.raise("cannot get line info of unread byte");
+    }
+
+    // Do a binary search to find the line number
+    let min = 1;
+    let max = this.getReadLineCount();
+    let line = 1;
+    let lineInfo: IJCCReaderLineInfo;
+
+    while (min <= max) {
+      line = Math.floor((min + max) / 2);
+
+      lineInfo = this.getLineInfo(line);
+
+      if (byte < lineInfo.byteStart) {
+        max = line - 1;
+      } else if (byte > lineInfo.byteEnd) {
+        min = line + 1;
+      } else {
+        break;
+      }
+    }
+
+    return line;
+  }
+
+  getLineAndColumn(byte: number): [number, number] {
+    const line = this.getLineFromByte(byte);
+    const lineInfo = this.getLineInfo(line);
+    const column = byte - lineInfo.byteStart;
+    return [line, column];
+  }
+
+  getByte(line: number, column: number = 1): number {
+    const lineInfo = this.getLineInfo(line);
+    const byte = lineInfo.byteStart + column - 1;
+
+    if (byte > lineInfo.byteEnd) {
+      this.raise("column not read");
+    }
+
+    return byte;
+  }
+
+  getColumns(line: number): number {
+    const lineInfo = this.getLineInfo(line);
+    return lineInfo.byteEnd - lineInfo.byteStart + 1;
+  }
+
+  getReadLineCount(): number {
+    return this._lineMap.size;
   }
 
   readable() {
@@ -98,25 +176,30 @@ export class JCCReader implements IJCCReader {
     });
   }
 
-  unshift(chunk: string | Buffer) {
-    if (!chunk.length) {
+  unshift(data: string | Buffer) {
+    if (!data.length) {
       return;
     }
     if (this._state.byte === 0) {
       this.raise("Cannot unshift before reading");
     }
-    if (chunk.length > 1) {
-      this.raise("Cannot unshift more than one byte at a time");
+
+    const str = data instanceof Buffer ? data.toString(this.encoding) : data;
+
+    if (str.length > 1) {
+      for (let i = str.length - 1; i >= 0; i--) {
+        this.unshift(str[i]);
+      }
+      return;
     }
 
-    this._readStream.unshift(chunk);
-    this._state.byte -= chunk.length;
+    this._readStream.unshift(data);
+    this._state.byte -= data.length;
 
-    const str = chunk instanceof Buffer ? chunk.toString(this.encoding) : chunk;
     if (str === "\n") {
       this._state.line--;
-      this._state.column = this._lineColMap.get(this._state.line) ?? 1;
-    } else if (str !== "\r") {
+      this._state.column = this.getColumns(this._state.line);
+    } else {
       this._state.column--;
     }
   }
@@ -139,22 +222,30 @@ export class JCCReader implements IJCCReader {
       }
 
       const chunk = stream.read(1) as Buffer;
-      this._state.byte++;
 
       if (!chunk) {
         return this.next();
       }
 
+      let lineInfo = this._lineMap.get(this._state.line);
+      if (!lineInfo) {
+        lineInfo = {
+          byteStart: this._state.byte,
+          byteEnd: this._state.byte,
+        };
+        this._lineMap.set(this._state.line, lineInfo);
+      } else {
+        lineInfo.byteEnd = this._state.byte;
+      }
+
+      this._state.byte++;
       const char = chunk.toString(this.encoding);
 
-      if (char !== "\r") {
-        if (char === "\n") {
-          this._lineColMap.set(this._state.line, this._state.column);
-          this._state.line++;
-          this._state.column = 1;
-        } else {
-          this._state.column++;
-        }
+      if (char === "\n") {
+        this._state.line++;
+        this._state.column = 1;
+      } else {
+        this._state.column++;
       }
 
       return { done: false, value: char };

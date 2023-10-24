@@ -11,7 +11,7 @@ import {
 export class CNumberLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<ICLexeme> {
     let number = char;
-    let isFloat = isNumberSeparator(char);
+    let decimalPointSeparators = isNumberSeparator(char) ? 1 : 0;
     let isScientificNotation = false;
     let prev = char;
 
@@ -22,10 +22,7 @@ export class CNumberLexConsumer implements ICLexConsumer {
       if (prev === "e" && isNumberSign(next) && !isScientificNotation) {
         isScientificNotation = true;
       } else if (isNumberSeparator(next)) {
-        if (isFloat) {
-          reader.raise(`Too many floating point separator "${next}"`);
-        }
-        isFloat = true;
+        decimalPointSeparators++;
       } else if (!(isDigit(next) || isLetter(next))) {
         reader.unshift(next);
         break;
@@ -33,6 +30,12 @@ export class CNumberLexConsumer implements ICLexConsumer {
 
       number += next;
       prev = next;
+    }
+
+    if (decimalPointSeparators > 1) {
+      reader.raise("too many decimal points in number", {
+        byteStart: reader.state.byte - (number.length - 1),
+      });
     }
 
     const type = CLexemeType.NUMBER_LITERAL;

@@ -1,8 +1,10 @@
 import { CLexConsumer } from "@/compilers/clang/lex/c.lex-consumer";
 import { CLexemeType } from "@/compilers/clang/lex/interfaces/lexeme-type.interface";
 import { ICommand } from "@/interfaces/cmd.interface";
+import { JCCErrorHandler } from "@/modules/error-handler";
 import { JCCLexGenerator } from "@/modules/lex-generator";
 import { JCCReader } from "@/modules/reader";
+import { relative } from "path";
 
 interface ILexemeOptions {
   encoding: BufferEncoding;
@@ -28,17 +30,31 @@ export const lexeme: ICommand = (parent) => {
       encoding: options.encoding,
     });
 
-    const lexGenerator = new JCCLexGenerator({
+    const errorHandler = new JCCErrorHandler({
       reader,
-      consumer: new CLexConsumer(),
     });
 
-    for await (const lexeme of lexGenerator) {
-      console.log(
-        `<${lexeme.id}, ${CLexemeType.getName(lexeme.type)}, ${
-          lexeme.name
-        }, ${JSON.stringify(lexeme.value)}>`
-      );
+    try {
+      const lexGenerator = new JCCLexGenerator({
+        reader,
+        consumer: new CLexConsumer(),
+      });
+
+      lexGenerator.on("error", (err) => {
+        errorHandler.handle(err);
+      });
+
+      for await (const lexeme of lexGenerator) {
+        const { filepath, line, column } = reader.state;
+        const path = relative(process.cwd(), filepath);
+        console.log(
+          `${lexeme.id} ${lexeme.name} ${JSON.stringify(
+            lexeme.value
+          )} [${path}:${line}:${column}]`
+        );
+      }
+    } catch (err) {
+      errorHandler.handle(err);
     }
   });
 };

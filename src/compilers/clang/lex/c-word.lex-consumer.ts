@@ -3,9 +3,12 @@ import { IJCCReader } from "@/interfaces/jcc-reader.interface";
 import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface";
 import { CLexemeType } from "./interfaces/lexeme-type.interface";
 import { C_KEYWORDS } from "./tokens/keywords";
+import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface";
 
 export class CWordLexConsumer implements ICLexConsumer {
-  async consume(char: string, reader: IJCCReader): Promise<ICLexeme> {
+  constructor(readonly constants: ICPreprocessorConstantMap) {}
+
+  async consume(char: string, reader: IJCCReader): Promise<false | ICLexeme> {
     let word = char;
 
     for await (const next of reader) {
@@ -28,6 +31,13 @@ export class CWordLexConsumer implements ICLexConsumer {
         type,
         value: word,
       };
+    }
+
+    // CONSTANT
+    if (this.constants.has(word)) {
+      const fn = this.constants.get(word)!;
+      await fn(reader);
+      return false;
     }
 
     // IDENTIFIER

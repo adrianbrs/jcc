@@ -37,3 +37,12 @@ export function isNumberSeparator(char: string): boolean {
 export function isWhitespace(char: string): boolean {
   return /\s/.test(char);
 }
+
+export function isLineBreak(char: string, line?: string): boolean {
+  if (char === "\n") {
+    if (!line || line[line.length - 1] !== "\\") {
+      return true;
+    }
+  }
+  return false;
+}

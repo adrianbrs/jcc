@@ -1,3 +1,4 @@
+import EventEmitter from "events";
 import {
   IJCCLexGenerator,
   IJCCLexGeneratorOptions,
@@ -5,6 +6,7 @@ import {
 } from "../interfaces/jcc-lex-generator.interface";
 
 export class JCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
+  extends EventEmitter
   implements IJCCLexGenerator<TLexeme>
 {
   get reader() {
@@ -15,7 +17,13 @@ export class JCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
     return this._options.consumer;
   }
 
-  constructor(private readonly _options: IJCCLexGeneratorOptions<TLexeme>) {}
+  get stopOnError() {
+    return this._options.stopOnError;
+  }
+
+  constructor(private readonly _options: IJCCLexGeneratorOptions<TLexeme>) {
+    super();
+  }
 
   next(): Promise<IteratorResult<TLexeme>> {
     return this.reader.next().then(async ({ done, value: char }) => {
@@ -23,7 +31,17 @@ export class JCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
         return { done: true, value: null };
       }
 
-      const lexeme = await this.consumer.consume(char, this.reader);
+      const lexeme = await Promise.resolve(
+        this.consumer.consume(char, this.reader)
+      ).catch((err) => {
+        if (this.stopOnError) {
+          throw err;
+        }
+
+        this.emit("error", err);
+
+        return null;
+      });
 
       if (!lexeme) {
         return this.next();

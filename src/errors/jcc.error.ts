@@ -1,31 +1,68 @@
 import { IJCCFileState } from "@/interfaces/file-state.interface";
 
-export interface IJCCErrorOptions extends Partial<IJCCFileState> {
+export interface IJCCErrorOptions {
+  state?: IJCCFileState;
   /**
    * Selected range of bytes to highlight, counted relative to the current byte.\
    * Can be negative or positive.
    */
-  selection?: number;
   cause?: Error;
   details?: any;
+
+  /**
+   * Line that raised the error.
+   *
+   * @default state.line
+   */
+  line?: number;
+
+  /**
+   * Column that raised the error.
+   *
+   * @default state.column
+   */
+  column?: number;
+
+  /**
+   * Start byte of the selection.
+   *
+   * @default state.byte
+   */
+  byteStart?: number;
+
+  /**
+   * End byte of the selection.
+   *
+   * @default state.byte
+   */
+  byteEnd?: number;
 }
 
 export class JCCError extends Error implements IJCCErrorOptions {
-  filepath?: string | undefined;
-  line?: number | undefined;
-  column?: number | undefined;
-  cause?: Error | undefined;
-  encoding?: BufferEncoding | undefined;
+  cause?: Error;
   details?: any;
-  byte?: number | undefined;
-  selection?: number | undefined;
+  selection!: number;
+  state?: IJCCFileState;
+  byteStart?: number;
+  byteEnd?: number;
+  line?: number;
+  column?: number;
 
   constructor(message: string, options?: IJCCErrorOptions) {
     super(message);
     this.name = this.constructor.name;
 
     if (options) {
-      Object.assign(this, options);
+      Object.assign<this, Partial<IJCCErrorOptions>, IJCCErrorOptions>(
+        this,
+        {
+          line: options.state?.line,
+          column: options.state?.column,
+          byteStart: options.state?.byte,
+          byteEnd: options.state?.byte,
+        },
+        options
+      );
     }
 
     Error.captureStackTrace(this, this.constructor);
@@ -36,17 +73,19 @@ export class JCCError extends Error implements IJCCErrorOptions {
       name: this.name,
       message: this.message,
       stack: this.stack,
-      filepath: this.filepath,
-      ...(typeof this.encoding !== "undefined" && { encoding: this.encoding }),
-      ...(typeof this.line !== "undefined" && { line: this.line }),
-      ...(typeof this.column !== "undefined" && { column: this.column }),
-      ...(typeof this.details !== "undefined" && { details: this.details }),
+      ...(this.state && {
+        state: this.state,
+      }),
       ...(typeof this.selection !== "undefined" && {
         selection: this.selection,
       }),
-      ...(typeof this.byte !== "undefined" && {
-        bytesRead: this.byte,
+      ...(typeof this.byteStart !== "undefined" && {
+        byteStart: this.byteStart,
       }),
+      ...(typeof this.byteEnd !== "undefined" && { byteEnd: this.byteEnd }),
+      ...(typeof this.line !== "undefined" && { line: this.line }),
+      ...(typeof this.column !== "undefined" && { column: this.column }),
+      ...(this.details && { details: this.details }),
       ...(this.cause && { cause: this.cause }),
     };
   }
