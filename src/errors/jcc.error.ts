@@ -1,4 +1,4 @@
-import { IJCCFileState } from "@/interfaces/file-state.interface";
+import { IJCCFileState } from "@/interfaces/jcc-file-state.interface";
 
 export interface IJCCErrorOptions {
   state?: IJCCFileState;

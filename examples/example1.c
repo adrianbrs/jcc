@@ -15,10 +15,10 @@ int main()
   valor = +6.32;
   valor = valor - -35. + 0xb;
   char *str = "hello \"world\"!";
-  double a = 1.0..0..0;
+  // double a = 1.0..0..0;
 
   char *awdwdwd = "aaawdwd";
-  double c = +..2..2.2.2.2.22;
+  // double c = +..2..2.2.2.2.22;
 
   int abc(1) = 1;
 

@@ -1,6 +1,7 @@
 import { ReadStream } from "fs";
-import { IJCCFileState } from "./file-state.interface";
-import { JCCError, IJCCErrorOptions } from "@/errors/jcc.error";
+import { IJCCFileState } from "./jcc-file-state.interface";
+import { IJCCModule } from "./jcc-module.interface";
+import { IJCCCompiler } from "./jcc-compiler.interface";
 
 export interface IJCCReaderOptions {
   /**
@@ -21,7 +22,9 @@ export interface IJCCReaderLineInfo {
   byteEnd: number;
 }
 
-export interface IJCCReader extends AsyncIterableIterator<string> {
+export interface IJCCReader<TCompiler extends IJCCCompiler = IJCCCompiler>
+  extends AsyncIterableIterator<string>,
+    IJCCModule<TCompiler> {
   readonly state: IJCCFileState;
   readonly filepath: string;
   readonly encoding: BufferEncoding;
@@ -78,22 +81,4 @@ export interface IJCCReader extends AsyncIterableIterator<string> {
    * ready to be read.
    */
   readable(): Promise<ReadStream>;
-
-  /**
-   * Creates a new `JCCError` with the current state of the reader.
-   */
-  makeError(
-    message: string,
-    options?: Omit<IJCCErrorOptions, keyof IJCCFileState>
-  ): JCCError;
-
-  /**
-   * Creates a new `JCCError` with the current state of the reader and throws it.
-   *
-   * @throws {JCCError}
-   */
-  raise(
-    message: string,
-    options?: Omit<IJCCErrorOptions, keyof IJCCFileState>
-  ): never;
 }
