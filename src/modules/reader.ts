@@ -50,8 +50,6 @@ export class JCCReader implements IJCCReader {
         ? this.getLineAndColumn(options.byteStart)
         : [state.line, state.column];
 
-    console.log(line, column, options?.byteStart);
-
     return new JCCError(message, {
       state,
       line,
