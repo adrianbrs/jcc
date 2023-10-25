@@ -1,7 +1,7 @@
 import { ReadStream } from "fs";
 import { IJCCFileState } from "./jcc-file-state.interface";
-import { IJCCModule } from "./jcc-module.interface";
-import { IJCCCompiler } from "./jcc-compiler.interface";
+import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error";
+import { IJCCLogger } from "./jcc-logger.interface";
 
 export interface IJCCReaderOptions {
   /**
@@ -15,6 +15,11 @@ export interface IJCCReaderOptions {
    * @default "utf-8"
    */
   encoding?: BufferEncoding;
+
+  /**
+   * The logger to use.
+   */
+  logger?: IJCCLogger;
 }
 
 export interface IJCCReaderLineInfo {
@@ -22,12 +27,11 @@ export interface IJCCReaderLineInfo {
   byteEnd: number;
 }
 
-export interface IJCCReader<TCompiler extends IJCCCompiler = IJCCCompiler>
-  extends AsyncIterableIterator<string>,
-    IJCCModule<TCompiler> {
+export interface IJCCReader extends AsyncIterableIterator<string> {
   readonly state: IJCCFileState;
   readonly filepath: string;
   readonly encoding: BufferEncoding;
+  readonly logger?: IJCCLogger;
 
   /**
    * Returns information about the given line.\
@@ -81,4 +85,22 @@ export interface IJCCReader<TCompiler extends IJCCCompiler = IJCCCompiler>
    * ready to be read.
    */
   readable(): Promise<ReadStream>;
+
+  /**
+   * Creates a new `JCCError` with the current state of the reader.
+   */
+  makeError(
+    message: string,
+    options?: Omit<IJCCErrorOptions, keyof IJCCFileState>
+  ): JCCError;
+
+  /**
+   * Creates a new `JCCError` with the current state of the reader and throws it.
+   *
+   * @throws {JCCError}
+   */
+  raise(
+    message: string,
+    options?: Omit<IJCCErrorOptions, keyof IJCCFileState>
+  ): never;
 }

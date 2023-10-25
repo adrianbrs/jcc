@@ -1,12 +1,11 @@
 import { JCCError } from "@/errors/jcc.error";
 import { Chalk, ChalkInstance } from "chalk";
 import { createSupportsColor } from "supports-color";
-import { createReadStream } from "fs";
 import { IJCCLogger, JCCLogLevel } from "@/interfaces/jcc-logger.interface";
-import { IJCCCompiler } from "@/interfaces/jcc-compiler.interface";
+import { readLineRange } from "@/helpers/readline";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface";
 import path from "path";
 import util from "util";
-import { readLineRange } from "@/helpers/readline";
 
 export interface IJCCLoggerOptions {
   /**
@@ -66,9 +65,7 @@ export interface IJCCLoggerOptions {
   errorLogLevels?: JCCLogLevel[];
 }
 
-export class JCCLogger<TCompiler extends IJCCCompiler = IJCCCompiler>
-  implements IJCCLogger
-{
+export class JCCLogger implements IJCCLogger {
   static LEVEL_COLORS: Record<
     JCCLogLevel,
     (chalk: ChalkInstance) => ChalkInstance
@@ -84,7 +81,7 @@ export class JCCLogger<TCompiler extends IJCCCompiler = IJCCCompiler>
   #errorLevels = new Set<JCCLogLevel>();
   #chalk: ChalkInstance;
 
-  constructor(readonly compiler: IJCCCompiler, options?: IJCCLoggerOptions) {
+  constructor(readonly reader: IJCCReader, options?: IJCCLoggerOptions) {
     this.options = Object.freeze(
       Object.assign<Required<IJCCLoggerOptions>, IJCCLoggerOptions | undefined>(
         {
@@ -116,22 +113,27 @@ export class JCCLogger<TCompiler extends IJCCCompiler = IJCCCompiler>
   }
 
   async log(level: JCCLogLevel, ...args: any[]) {
-    const message = args.map((arg) => this.format(arg)).join(" ");
+    const message = await Promise.all(
+      args.map((arg) => this.format(level, arg))
+    ).then((msgs) => msgs.join(" ") + "\n");
     const stream = this.#errorLevels.has(level)
       ? this.options.stderr
       : this.options.stdout;
     stream.write(message);
   }
 
-  async format(arg: any): Promise<string> {
-    let state = this.compiler.state;
+  async format(level: JCCLogLevel, arg: any): Promise<string> {
+    let state = this.reader.state;
     let message: string | null = null;
 
     if (arg instanceof JCCError || arg instanceof Error) {
       message = await this.formatError(arg);
 
-      if (arg instanceof JCCError && arg.state) {
-        state = arg.state;
+      if (arg instanceof JCCError) {
+        state.filepath = arg.state?.filepath ?? state.filepath;
+        state.encoding = arg.state?.encoding ?? state.encoding;
+        state.line = arg.line ?? state.line;
+        state.column = arg.column ?? state.column;
       }
     } else if (typeof arg === "string") {
       message = arg;
@@ -144,16 +146,18 @@ export class JCCLogger<TCompiler extends IJCCCompiler = IJCCCompiler>
 
     const relativePath = path.relative(this.options.cwd, state.filepath);
 
+    const lvlMessage = this.getColor(level)(level.toLowerCase());
+    const encodingMessage = state.encoding
+      ? this.#chalk.dim(`(${state.encoding})`)
+      : "";
+
     message =
       this.#chalk.whiteBright.bold(
-        `${relativePath}:${state.line ?? ""}:${state.column ?? ""}:`
+        `${relativePath}:${state.line ?? ""}:${state.column ?? ""}`
       ) +
-      " " +
+      `${encodingMessage}:` +
+      ` ${lvlMessage}: ` +
       message;
-
-    if (state.encoding) {
-      message += this.#chalk.dim(` (${state.encoding})`);
-    }
 
     return message;
   }
@@ -231,7 +235,7 @@ export class JCCLogger<TCompiler extends IJCCCompiler = IJCCCompiler>
       return null;
     }
 
-    const reader = this.compiler.reader;
+    const reader = this.reader;
     const { filepath, encoding } = state;
     const lineStart = reader.getLineFromByte(byteStart);
     const startOfLineByte = reader.getByte(lineStart);

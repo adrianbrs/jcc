@@ -10,18 +10,18 @@ export class JCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
   implements IJCCLexGenerator<TLexeme>
 {
   get reader() {
-    return this._options.reader;
+    return this.options.reader;
   }
 
   get consumer() {
-    return this._options.consumer;
+    return this.options.consumer;
   }
 
   get stopOnError() {
-    return this._options.stopOnError;
+    return this.options.stopOnError;
   }
 
-  constructor(private readonly _options: IJCCLexGeneratorOptions<TLexeme>) {
+  constructor(readonly options: IJCCLexGeneratorOptions<TLexeme>) {
     super();
   }
 

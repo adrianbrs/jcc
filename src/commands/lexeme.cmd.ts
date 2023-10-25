@@ -1,8 +1,8 @@
 import { CLexConsumer } from "@/compilers/clang/lex/c.lex-consumer";
-import { CLexemeType } from "@/compilers/clang/lex/interfaces/lexeme-type.interface";
 import { ICommand } from "@/interfaces/cmd.interface";
 import { JCCErrorHandler } from "@/modules/error-handler";
 import { JCCLexGenerator } from "@/modules/lex-generator";
+import { JCCLogger } from "@/modules/logger";
 import { JCCReader } from "@/modules/reader";
 import { relative } from "path";
 
@@ -31,7 +31,7 @@ export const lexeme: ICommand = (parent) => {
     });
 
     const errorHandler = new JCCErrorHandler({
-      reader,
+      logger: new JCCLogger(reader),
     });
 
     try {
@@ -40,8 +40,8 @@ export const lexeme: ICommand = (parent) => {
         consumer: new CLexConsumer(),
       });
 
-      lexGenerator.on("error", (err) => {
-        errorHandler.handle(err);
+      lexGenerator.on("error", async (err) => {
+        await errorHandler.handle(err);
       });
 
       for await (const lexeme of lexGenerator) {
@@ -54,7 +54,7 @@ export const lexeme: ICommand = (parent) => {
         );
       }
     } catch (err) {
-      errorHandler.handle(err);
+      await errorHandler.handle(err);
     }
   });
 };

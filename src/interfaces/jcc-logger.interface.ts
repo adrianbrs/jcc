@@ -1,6 +1,3 @@
-import { IJCCCompiler } from "./jcc-compiler.interface";
-import { IJCCModule } from "./jcc-module.interface";
-
 export enum JCCLogLevel {
   ERROR = "error",
   WARN = "warn",
@@ -8,7 +5,6 @@ export enum JCCLogLevel {
   LOG = "log",
 }
 
-export interface IJCCLogger<TCompiler extends IJCCCompiler = IJCCCompiler>
-  extends IJCCModule<TCompiler> {
+export interface IJCCLogger {
   log(level: JCCLogLevel, ...args: any[]): void | Promise<void>;
 }

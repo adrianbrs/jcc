@@ -1,13 +1,11 @@
 import { ReadStream, createReadStream, existsSync } from "fs";
-import { JCCError, IJCCErrorOptions } from "../errors/jcc.error";
 import {
   IJCCReader,
-  IJCCReaderEventArgs,
-  IJCCReaderEventNames,
   IJCCReaderLineInfo,
   IJCCReaderOptions,
 } from "../interfaces/jcc-reader.interface";
-import { IJCCFileState } from "@/interfaces/file-state.interface";
+import { IJCCFileState } from "@/interfaces/jcc-file-state.interface";
+import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error";
 import EventEmitter from "events";
 
 export class JCCReader extends EventEmitter implements IJCCReader {
@@ -47,18 +45,27 @@ export class JCCReader extends EventEmitter implements IJCCReader {
     this._readStream = createReadStream(this.filepath);
   }
 
-  on<E extends IJCCReaderEventNames>(
-    event: E,
-    listener: (...args: IJCCReaderEventArgs<E>) => void
-  ): this {
-    return super.on(event, listener as (...args: any[]) => void);
+  makeError(message: string, options?: IJCCErrorOptions | undefined): JCCError {
+    const state = this.state;
+
+    const [line, column] =
+      typeof options?.byteStart !== "undefined"
+        ? this.getLineAndColumn(options.byteStart)
+        : [state.line, state.column];
+
+    return new JCCError(message, {
+      state,
+      line,
+      column,
+      ...options,
+    });
   }
 
-  addListener<E extends IJCCReaderEventNames>(
-    event: E,
-    listener: (...args: IJCCReaderEventArgs<E>) => void
-  ): this {
-    return super.addListener(event, listener as (...args: any[]) => void);
+  raise(
+    message: string,
+    options?: Omit<IJCCErrorOptions, keyof IJCCFileState> | undefined
+  ): never {
+    throw this.makeError(message, options);
   }
 
   getLineInfo(line: number): IJCCReaderLineInfo {

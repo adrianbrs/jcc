@@ -1,5 +1,3 @@
-import { IJCCCompiler, IJCCCompilerTypes } from "./jcc-compiler.interface";
-import { IJCCModule } from "./jcc-module.interface";
 import { IJCCReader } from "./jcc-reader.interface";
 
 export interface IJCCLexConsumer<R = IJCCLexeme> {
@@ -10,9 +8,10 @@ export interface IJCCLexConsumer<R = IJCCLexeme> {
 }
 
 export interface IJCCLexGeneratorOptions<
-  TCompiler extends IJCCCompiler = IJCCCompiler
+  TLexeme extends IJCCLexeme = IJCCLexeme
 > {
-  consumer: IJCCLexConsumer<IJCCCompilerTypes<TCompiler>["lexeme"]>;
+  reader: IJCCReader;
+  consumer: IJCCLexConsumer<TLexeme>;
   stopOnError?: boolean;
 }
 
@@ -20,8 +19,7 @@ export interface IJCCLexeme {
   value: string;
 }
 
-export interface IJCCLexGenerator<TCompiler extends IJCCCompiler = IJCCCompiler>
-  extends AsyncIterableIterator<IJCCCompilerTypes<TCompiler>["lexeme"]>,
-    IJCCModule<TCompiler> {
+export interface IJCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
+  extends AsyncIterableIterator<TLexeme> {
   readonly options: Readonly<IJCCLexGeneratorOptions>;
 }
