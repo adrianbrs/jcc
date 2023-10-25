@@ -9,6 +9,13 @@ import util from "util";
 
 export interface IJCCLoggerOptions {
   /**
+   * Minimum log level to display.
+   *
+   * @default JCCLogLevel.ERROR
+   */
+  level?: JCCLogLevel | null;
+
+  /**
    * Whether to use colors in the output.
    *
    * @default true
@@ -60,7 +67,7 @@ export interface IJCCLoggerOptions {
   /**
    * Log levels to be considered as errors.
    *
-   * @default ["error", "warn"]
+   * @default [JCCLogLevel.ERROR, JCCLogLevel.WARN]
    */
   errorLogLevels?: JCCLogLevel[];
 }
@@ -70,10 +77,10 @@ export class JCCLogger implements IJCCLogger {
     JCCLogLevel,
     (chalk: ChalkInstance) => ChalkInstance
   > = {
-    error: (c) => c.red,
-    log: (c) => c.white,
-    warn: (c) => c.yellow,
-    note: (c) => c.blue,
+    [JCCLogLevel.ERROR]: (c) => c.red,
+    [JCCLogLevel.WARN]: (c) => c.yellow,
+    [JCCLogLevel.NOTE]: (c) => c.blue,
+    [JCCLogLevel.LOG]: (c) => c.white,
   };
 
   readonly options: Required<Readonly<IJCCLoggerOptions>>;
@@ -93,6 +100,7 @@ export class JCCLogger implements IJCCLogger {
           showCodeLines: true,
           showStackTrace: false,
           errorLogLevels: [JCCLogLevel.ERROR, JCCLogLevel.WARN],
+          level: JCCLogLevel.ERROR,
         },
         options
       )
@@ -112,7 +120,15 @@ export class JCCLogger implements IJCCLogger {
     return JCCLogger.LEVEL_COLORS[level]?.(this.#chalk) ?? this.#chalk;
   }
 
+  getName(level: JCCLogLevel) {
+    return JCCLogLevel[level].toLowerCase();
+  }
+
   async log(level: JCCLogLevel, ...args: any[]) {
+    if (this.options.level === null || level > this.options.level) {
+      return;
+    }
+
     const message = await Promise.all(
       args.map((arg) => this.format(level, arg))
     ).then((msgs) => msgs.join(" ") + "\n");
@@ -127,7 +143,7 @@ export class JCCLogger implements IJCCLogger {
     let message: string | null = null;
 
     if (arg instanceof JCCError || arg instanceof Error) {
-      message = await this.formatError(arg);
+      message = await this.formatError(level, arg);
 
       if (arg instanceof JCCError) {
         state.filepath = arg.state?.filepath ?? state.filepath;
@@ -146,7 +162,7 @@ export class JCCLogger implements IJCCLogger {
 
     const relativePath = path.relative(this.options.cwd, state.filepath);
 
-    const lvlMessage = this.getColor(level)(level.toLowerCase());
+    const lvlMessage = this.getColor(level)(this.getName(level));
     const encodingMessage = state.encoding
       ? this.#chalk.dim(`(${state.encoding})`)
       : "";
@@ -162,13 +178,16 @@ export class JCCLogger implements IJCCLogger {
     return message;
   }
 
-  async formatError(error: JCCError | Error): Promise<string> {
+  async formatError(
+    level: JCCLogLevel,
+    error: JCCError | Error
+  ): Promise<string> {
     if (error instanceof JCCError) {
       const { message, stack, cause, details } = error;
 
       let msg = message;
 
-      const codeFrame = await this.getErrorFrame(error);
+      const codeFrame = await this.getErrorFrame(level, error);
       if (codeFrame) {
         msg += `\n${codeFrame}`;
       }
@@ -218,7 +237,7 @@ export class JCCLogger implements IJCCLogger {
     }
   }
 
-  private async getErrorFrame(error: JCCError) {
+  private async getErrorFrame(level: JCCLogLevel, error: JCCError) {
     if (!this.options.showCodeLines) {
       return null;
     }
@@ -235,6 +254,7 @@ export class JCCLogger implements IJCCLogger {
       return null;
     }
 
+    const color = this.getColor(level);
     const reader = this.reader;
     const { filepath, encoding } = state;
     const lineStart = reader.getLineFromByte(byteStart);
@@ -263,7 +283,7 @@ export class JCCLogger implements IJCCLogger {
           if (char !== "\n") {
             // Build frame
             if (byteCount >= byteStart && byteCount <= byteEnd) {
-              frame += this.#chalk.redBright.bold(char);
+              frame += color.bold(char);
             } else {
               frame += char;
             }
@@ -271,9 +291,9 @@ export class JCCLogger implements IJCCLogger {
 
           // Build underline
           if (byteCount === byteStart) {
-            underline += this.#chalk.redBright.bold("^");
+            underline += color.bold("^");
           } else if (byteCount >= byteStart && byteCount <= byteEnd) {
-            underline += this.#chalk.redBright.bold("~");
+            underline += color.bold("~");
           } else {
             underline += " ";
           }

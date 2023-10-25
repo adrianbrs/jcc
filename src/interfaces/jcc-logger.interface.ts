@@ -1,8 +1,8 @@
 export enum JCCLogLevel {
-  ERROR = "error",
-  WARN = "warn",
-  NOTE = "note",
-  LOG = "log",
+  ERROR = 0,
+  WARN = 1,
+  NOTE = 2,
+  LOG = 3,
 }
 
 export interface IJCCLogger {

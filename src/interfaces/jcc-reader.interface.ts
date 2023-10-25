@@ -34,6 +34,11 @@ export interface IJCCReader extends AsyncIterableIterator<string> {
   readonly logger?: IJCCLogger;
 
   /**
+   * Sets the logger to use.
+   */
+  setLogger(logger?: IJCCLogger): void;
+
+  /**
    * Returns information about the given line.\
    * **The line must be already read!**
    */
