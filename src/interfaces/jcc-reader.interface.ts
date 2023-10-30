@@ -32,6 +32,7 @@ export interface IJCCReader extends AsyncIterableIterator<string> {
   readonly filepath: string;
   readonly encoding: BufferEncoding;
   readonly logger?: IJCCLogger;
+  readonly closed: boolean;
 
   /**
    * Sets the logger to use.
@@ -90,6 +91,11 @@ export interface IJCCReader extends AsyncIterableIterator<string> {
    * ready to be read.
    */
   readable(): Promise<ReadStream>;
+
+  /**
+   * Closes the read stream.
+   */
+  close(): void;
 
   /**
    * Creates a new `JCCError` with the current state of the reader.

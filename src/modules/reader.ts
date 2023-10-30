@@ -20,6 +20,7 @@ export class JCCReader extends EventEmitter implements IJCCReader {
   #readStream: ReadStream;
   #lineMap = new Map<number, IJCCReaderLineInfo>();
   #logger?: IJCCLogger;
+  #closed = false;
 
   get state() {
     return { ...this._state };
@@ -41,6 +42,10 @@ export class JCCReader extends EventEmitter implements IJCCReader {
     return this.#logger;
   }
 
+  get closed() {
+    return this.#closed;
+  }
+
   constructor(private readonly _options: IJCCReaderOptions) {
     super();
 
@@ -49,6 +54,18 @@ export class JCCReader extends EventEmitter implements IJCCReader {
     }
 
     this.#readStream = createReadStream(this.filepath);
+
+    this.#readStream.on("close", () => {
+      this.close();
+    });
+  }
+
+  close(): void {
+    if (!this.#closed) {
+      this.#closed = true;
+      this.#readStream.close();
+      this.emit("close");
+    }
   }
 
   setLogger(logger?: IJCCLogger | undefined): void {
@@ -174,14 +191,16 @@ export class JCCReader extends EventEmitter implements IJCCReader {
       const cleanup = () => {
         this.#readStream.off("readable", resolve);
         this.#readStream.off("end", resolve);
+        this.#readStream.off("close", resolve);
         this.#readStream.off("error", reject);
       };
 
       this.#readStream.once("readable", resolve);
       this.#readStream.once("end", resolve);
+      this.#readStream.once("close", resolve);
       this.#readStream.once("error", reject);
 
-      if (this.#readStream.readableLength > 0) {
+      if (this.#readStream.readableLength > 0 || this.#readStream.closed) {
         resolve();
       }
     });
@@ -226,10 +245,13 @@ export class JCCReader extends EventEmitter implements IJCCReader {
     });
   }
 
-  next(): Promise<IteratorResult<string>> {
+  async next(): Promise<IteratorResult<string>> {
     return this.readable().then((stream) => {
-      if (stream.closed || !stream.readable) {
-        return { done: true, value: null };
+      if (this.closed || !stream.readable) {
+        if (!this.closed) {
+          this.close();
+        }
+        return { done: true, value: "" };
       }
 
       const chunk = stream.read(1) as Buffer;
