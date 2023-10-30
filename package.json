@@ -9,7 +9,7 @@
     "build:watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
     "start:dev": "NODE_ENV=development tsx src/index.ts",
     "clang:lex": "clang -fsyntax-only -Xclang -dump-tokens",
-    "start": "jcc",
+    "start": "node ./bin/jcc.js",
     "jcc": "./bin/jcc.js"
   },
   "bin": {
@@ -22,6 +22,9 @@
     "typescript",
     "case study"
   ],
+  "engines": {
+    "node": ">=14"
+  },
   "author": "Adrian Cerbaro <adrian@cerbaro.dev>",
   "license": "MIT",
   "devDependencies": {
