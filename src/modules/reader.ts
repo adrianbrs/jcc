@@ -1,13 +1,15 @@
 import { ReadStream, createReadStream, existsSync } from "fs";
-import { JCCError, IJCCErrorOptions } from "../errors/jcc.error";
 import {
   IJCCReader,
   IJCCReaderLineInfo,
   IJCCReaderOptions,
 } from "../interfaces/jcc-reader.interface";
-import { IJCCFileState } from "@/interfaces/file-state.interface";
+import { IJCCFileState } from "@/interfaces/jcc-file-state.interface";
+import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error";
+import EventEmitter from "events";
+import { IJCCLogger } from "@/interfaces/jcc-logger.interface";
 
-export class JCCReader implements IJCCReader {
+export class JCCReader extends EventEmitter implements IJCCReader {
   private readonly _state: IJCCFileState = {
     filepath: this.filepath,
     encoding: this.encoding,
@@ -15,8 +17,9 @@ export class JCCReader implements IJCCReader {
     column: 1,
     byte: 0,
   };
-  private readonly _readStream: ReadStream;
-  private readonly _lineMap = new Map<number, IJCCReaderLineInfo>();
+  #readStream: ReadStream;
+  #lineMap = new Map<number, IJCCReaderLineInfo>();
+  #logger?: IJCCLogger;
 
   get state() {
     return { ...this._state };
@@ -34,12 +37,22 @@ export class JCCReader implements IJCCReader {
     return { ...this._options };
   }
 
+  get logger() {
+    return this.#logger;
+  }
+
   constructor(private readonly _options: IJCCReaderOptions) {
+    super();
+
     if (!existsSync(this.filepath)) {
       this.raise("File not found");
     }
 
-    this._readStream = createReadStream(this.filepath);
+    this.#readStream = createReadStream(this.filepath);
+  }
+
+  setLogger(logger?: IJCCLogger | undefined): void {
+    this.#logger = logger;
   }
 
   makeError(message: string, options?: IJCCErrorOptions | undefined): JCCError {
@@ -73,7 +86,7 @@ export class JCCReader implements IJCCReader {
       this.raise("line not read");
     }
 
-    return this._lineMap.get(line)!;
+    return this.#lineMap.get(line)!;
   }
 
   getLineFromByte(byte: number): number {
@@ -131,7 +144,7 @@ export class JCCReader implements IJCCReader {
   }
 
   getReadLineCount(): number {
-    return this._lineMap.size;
+    return this.#lineMap.size;
   }
 
   readable() {
@@ -143,7 +156,7 @@ export class JCCReader implements IJCCReader {
           done = true;
           cleanup();
 
-          _resolve(this._readStream);
+          _resolve(this.#readStream);
         }
       };
       const reject = (err: Error) => {
@@ -159,16 +172,16 @@ export class JCCReader implements IJCCReader {
         }
       };
       const cleanup = () => {
-        this._readStream.off("readable", resolve);
-        this._readStream.off("end", resolve);
-        this._readStream.off("error", reject);
+        this.#readStream.off("readable", resolve);
+        this.#readStream.off("end", resolve);
+        this.#readStream.off("error", reject);
       };
 
-      this._readStream.once("readable", resolve);
-      this._readStream.once("end", resolve);
-      this._readStream.once("error", reject);
+      this.#readStream.once("readable", resolve);
+      this.#readStream.once("end", resolve);
+      this.#readStream.once("error", reject);
 
-      if (this._readStream.readableLength > 0) {
+      if (this.#readStream.readableLength > 0) {
         resolve();
       }
     });
@@ -191,7 +204,7 @@ export class JCCReader implements IJCCReader {
       return;
     }
 
-    this._readStream.unshift(data);
+    this.#readStream.unshift(data);
     this._state.byte -= data.length;
 
     if (str === "\n") {
@@ -225,13 +238,13 @@ export class JCCReader implements IJCCReader {
         return this.next();
       }
 
-      let lineInfo = this._lineMap.get(this._state.line);
+      let lineInfo = this.#lineMap.get(this._state.line);
       if (!lineInfo) {
         lineInfo = {
           byteStart: this._state.byte,
           byteEnd: this._state.byte,
         };
-        this._lineMap.set(this._state.line, lineInfo);
+        this.#lineMap.set(this._state.line, lineInfo);
       } else {
         lineInfo.byteEnd = this._state.byte;
       }

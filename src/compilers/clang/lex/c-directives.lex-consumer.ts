@@ -3,10 +3,12 @@ import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface";
 import { CDefineDirectiveLexConsumer } from "./directives/c-define-directive.lex-consumer";
 import { isAlphaNumeric } from "@/helpers/string";
 import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface";
+import { CIncludeDirectiveLexConsumer } from "./directives/c-include-directive.lex-consumer";
 
 export class CDirectivesLexConsumer implements ICLexConsumer {
   private readonly directives: Record<string, ICLexConsumer> = {
     define: new CDefineDirectiveLexConsumer(),
+    include: new CIncludeDirectiveLexConsumer(),
   };
 
   constructor(readonly constants: ICPreprocessorConstantMap) {}

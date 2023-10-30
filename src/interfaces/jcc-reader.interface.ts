@@ -1,6 +1,7 @@
 import { ReadStream } from "fs";
-import { IJCCFileState } from "./file-state.interface";
-import { JCCError, IJCCErrorOptions } from "@/errors/jcc.error";
+import { IJCCFileState } from "./jcc-file-state.interface";
+import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error";
+import { IJCCLogger } from "./jcc-logger.interface";
 
 export interface IJCCReaderOptions {
   /**
@@ -14,6 +15,11 @@ export interface IJCCReaderOptions {
    * @default "utf-8"
    */
   encoding?: BufferEncoding;
+
+  /**
+   * The logger to use.
+   */
+  logger?: IJCCLogger;
 }
 
 export interface IJCCReaderLineInfo {
@@ -25,6 +31,12 @@ export interface IJCCReader extends AsyncIterableIterator<string> {
   readonly state: IJCCFileState;
   readonly filepath: string;
   readonly encoding: BufferEncoding;
+  readonly logger?: IJCCLogger;
+
+  /**
+   * Sets the logger to use.
+   */
+  setLogger(logger?: IJCCLogger): void;
 
   /**
    * Returns information about the given line.\

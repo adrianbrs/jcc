@@ -20,4 +20,6 @@ export interface IJCCLexeme {
 }
 
 export interface IJCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
-  extends AsyncIterableIterator<TLexeme> {}
+  extends AsyncIterableIterator<TLexeme> {
+  readonly options: Readonly<IJCCLexGeneratorOptions>;
+}
