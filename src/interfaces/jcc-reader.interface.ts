@@ -1,7 +1,7 @@
 import { ReadStream } from "fs";
-import { IJCCFileState } from "./jcc-file-state.interface";
-import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error";
-import { IJCCLogger } from "./jcc-logger.interface";
+import { IJCCFileState } from "./jcc-file-state.interface.js";
+import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error.js";
+import { IJCCLogger } from "./jcc-logger.interface.js";
 
 export interface IJCCReaderOptions {
   /**

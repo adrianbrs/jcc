@@ -1,10 +1,10 @@
-import { CLexConsumer } from "@/compilers/clang/lex/c.lex-consumer";
-import { ICommand } from "@/interfaces/cmd.interface";
-import { JCCLogLevel } from "@/interfaces/jcc-logger.interface";
-import { JCCErrorHandler } from "@/modules/error-handler";
-import { JCCLexGenerator } from "@/modules/lex-generator";
-import { JCCLogger } from "@/modules/logger";
-import { JCCReader } from "@/modules/reader";
+import { CLexConsumer } from "@/compilers/clang/lex/c.lex-consumer.js";
+import { ICommand } from "@/interfaces/cmd.interface.js";
+import { JCCLogLevel } from "@/interfaces/jcc-logger.interface.js";
+import { JCCErrorHandler } from "@/modules/error-handler.js";
+import { JCCLexGenerator } from "@/modules/lex-generator.js";
+import { JCCLogger } from "@/modules/logger.js";
+import { JCCReader } from "@/modules/reader.js";
 import { createOption } from "commander";
 import { relative } from "path";
 

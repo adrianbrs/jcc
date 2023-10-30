@@ -1,4 +1,4 @@
-import { CTokenDef, ICTokenDictKeys } from "../token-def";
+import { CTokenDef, ICTokenDictKeys } from "../token-def.js";
 
 export const C_KEYWORDS = CTokenDef.make({
   auto: 0,

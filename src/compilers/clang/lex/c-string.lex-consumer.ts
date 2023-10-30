@@ -1,7 +1,7 @@
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
-import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface";
-import { CLexemeType } from "./interfaces/lexeme-type.interface";
-import { isLineBreak } from "@/helpers/string";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
+import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface.js";
+import { CLexemeType } from "./interfaces/lexeme-type.interface.js";
+import { isLineBreak } from "@/helpers/string.js";
 
 export class CStringLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<false | ICLexeme> {

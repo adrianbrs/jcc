@@ -1,8 +1,8 @@
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
-import { isLineBreak } from "@/helpers/string";
-import { ICPreprocessorConstantFn } from "../interfaces/preprocessor-constants.interface";
-import { ICLexConsumer, ICLexeme } from "../interfaces/lexeme.interface";
-import { JCCLogLevel } from "@/interfaces/jcc-logger.interface";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
+import { isLineBreak } from "@/helpers/string.js";
+import { ICPreprocessorConstantFn } from "../interfaces/preprocessor-constants.interface.js";
+import { ICLexConsumer, ICLexeme } from "../interfaces/lexeme.interface.js";
+import { JCCLogLevel } from "@/interfaces/jcc-logger.interface.js";
 
 export class CDefineDirectiveLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<false | ICLexeme> {

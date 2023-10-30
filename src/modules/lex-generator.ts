@@ -3,7 +3,7 @@ import {
   IJCCLexGenerator,
   IJCCLexGeneratorOptions,
   IJCCLexeme,
-} from "../interfaces/jcc-lex-generator.interface";
+} from "../interfaces/jcc-lex-generator.interface.js";
 
 export class JCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
   extends EventEmitter

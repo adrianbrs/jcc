@@ -1,8 +1,8 @@
 import {
   IJCCLexConsumer,
   IJCCLexeme,
-} from "@/interfaces/jcc-lex-generator.interface";
-import { CLexemeType } from "./lexeme-type.interface";
+} from "@/interfaces/jcc-lex-generator.interface.js";
+import { CLexemeType } from "./lexeme-type.interface.js";
 
 export interface ICLexeme extends IJCCLexeme {
   id: number;

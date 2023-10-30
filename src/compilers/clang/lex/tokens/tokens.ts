@@ -1,5 +1,5 @@
-import { CLexemeType } from "../interfaces/lexeme-type.interface";
-import { CTokenDef, ICTokenDictKeys } from "../token-def";
+import { CLexemeType } from "../interfaces/lexeme-type.interface.js";
+import { CTokenDef, ICTokenDictKeys } from "../token-def.js";
 
 export const C_TOKENS = CTokenDef.make(
   {

@@ -1,12 +1,12 @@
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
-import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface";
-import { CLexemeType } from "./interfaces/lexeme-type.interface";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
+import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface.js";
+import { CLexemeType } from "./interfaces/lexeme-type.interface.js";
 import {
   isDigit,
   isLetter,
   isNumberSeparator,
   isNumberSign,
-} from "@/helpers/string";
+} from "@/helpers/string.js";
 
 export class CNumberLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<ICLexeme> {

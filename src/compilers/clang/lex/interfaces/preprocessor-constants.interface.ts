@@ -1,4 +1,4 @@
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
 
 export type ICPreprocessorConstantFn = (
   reader: IJCCReader

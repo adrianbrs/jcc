@@ -1,4 +1,4 @@
-import { IJCCReader } from "./jcc-reader.interface";
+import { IJCCReader } from "./jcc-reader.interface.js";
 
 export interface IJCCLexConsumer<R = IJCCLexeme> {
   /**

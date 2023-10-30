@@ -1,9 +1,9 @@
-import { isAlphaNumeric } from "@/helpers/string";
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
-import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface";
-import { CLexemeType } from "./interfaces/lexeme-type.interface";
-import { C_KEYWORDS } from "./tokens/keywords";
-import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface";
+import { isAlphaNumeric } from "@/helpers/string.js";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
+import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface.js";
+import { CLexemeType } from "./interfaces/lexeme-type.interface.js";
+import { C_KEYWORDS } from "./tokens/keywords.js";
+import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface.js";
 
 export class CWordLexConsumer implements ICLexConsumer {
   constructor(readonly constants: ICPreprocessorConstantMap) {}

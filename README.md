@@ -1,6 +1,6 @@
 # JCC - ~~GNU~~ JavaScript Compiler Collection
 
-### Case study of a minimalist C compiler built in JavaScript
+> Case study of a minimalist C compiler built in JavaScript
 
 ### Installing dependencies
 
@@ -54,4 +54,27 @@ or
 ```bash
 > npm link
 > jcc --help
+```
+
+## Commands
+
+```bash
+> jcc
+Usage: jcc [options] [command]
+
+Case study of a minimalist C compiler built in JavaScript
+
+Options:
+  -V, --version                output the version number
+  -h, --help                   display help for command
+
+Commands:
+  lexeme [options] <filepath>  Extract lexemes from source code
+  help [command]               display help for command
+```
+
+### Lexemes
+
+```bash
+
 ```

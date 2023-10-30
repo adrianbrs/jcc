@@ -3,11 +3,11 @@ import {
   IJCCReader,
   IJCCReaderLineInfo,
   IJCCReaderOptions,
-} from "../interfaces/jcc-reader.interface";
-import { IJCCFileState } from "@/interfaces/jcc-file-state.interface";
-import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error";
+} from "../interfaces/jcc-reader.interface.js";
+import { IJCCFileState } from "@/interfaces/jcc-file-state.interface.js";
+import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error.js";
 import EventEmitter from "events";
-import { IJCCLogger } from "@/interfaces/jcc-logger.interface";
+import { IJCCLogger } from "@/interfaces/jcc-logger.interface.js";
 
 export class JCCReader extends EventEmitter implements IJCCReader {
   private readonly _state: IJCCFileState = {

@@ -1,4 +1,4 @@
-import { IJCCLogger, JCCLogLevel } from "@/interfaces/jcc-logger.interface";
+import { IJCCLogger, JCCLogLevel } from "@/interfaces/jcc-logger.interface.js";
 
 export interface IJCCErrorHandlerOptions {
   /**

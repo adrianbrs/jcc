@@ -3,17 +3,17 @@ import {
   isDigit,
   isNumberSeparator,
   isWhitespace,
-} from "@/helpers/string";
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
-import { CWordLexConsumer } from "./c-word.lex-consumer";
-import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface";
-import { CNumberLexConsumer } from "./c-number.lex-consumer";
-import { CTokensLexConsumer } from "./c-tokens.lex-consumer";
-import { CCommentLexConsumer } from "./c-comment.lex-consumer";
-import { C_TOKENS } from "./tokens/tokens";
-import { CDirectivesLexConsumer } from "./c-directives.lex-consumer";
-import { CStringLexConsumer } from "./c-string.lex-consumer";
-import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface";
+} from "@/helpers/string.js";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
+import { CWordLexConsumer } from "./c-word.lex-consumer.js";
+import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface.js";
+import { CNumberLexConsumer } from "./c-number.lex-consumer.js";
+import { CTokensLexConsumer } from "./c-tokens.lex-consumer.js";
+import { CCommentLexConsumer } from "./c-comment.lex-consumer.js";
+import { C_TOKENS } from "./tokens/tokens.js";
+import { CDirectivesLexConsumer } from "./c-directives.lex-consumer.js";
+import { CStringLexConsumer } from "./c-string.lex-consumer.js";
+import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface.js";
 
 export class CLexConsumer implements ICLexConsumer {
   constants: ICPreprocessorConstantMap = new Map();

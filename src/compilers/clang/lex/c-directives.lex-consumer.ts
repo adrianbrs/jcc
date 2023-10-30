@@ -1,9 +1,9 @@
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
-import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface";
-import { CDefineDirectiveLexConsumer } from "./directives/c-define-directive.lex-consumer";
-import { isAlphaNumeric } from "@/helpers/string";
-import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface";
-import { CIncludeDirectiveLexConsumer } from "./directives/c-include-directive.lex-consumer";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
+import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface.js";
+import { CDefineDirectiveLexConsumer } from "./directives/c-define-directive.lex-consumer.js";
+import { isAlphaNumeric } from "@/helpers/string.js";
+import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface.js";
+import { CIncludeDirectiveLexConsumer } from "./directives/c-include-directive.lex-consumer.js";
 
 export class CDirectivesLexConsumer implements ICLexConsumer {
   private readonly directives: Record<string, ICLexConsumer> = {

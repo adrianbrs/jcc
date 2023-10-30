@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Case study of a minimalist C compiler built in JavaScript",
   "main": "bin/jcc.js",
+  "type": "module",
   "scripts": {
     "build": "tsc && tsc-alias",
     "build:watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",

@@ -1,7 +1,7 @@
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
-import { ICLexConsumer, ICLexeme } from "../interfaces/lexeme.interface";
-import { isLineBreak } from "@/helpers/string";
-import { JCCLogLevel } from "@/interfaces/jcc-logger.interface";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
+import { ICLexConsumer, ICLexeme } from "../interfaces/lexeme.interface.js";
+import { isLineBreak } from "@/helpers/string.js";
+import { JCCLogLevel } from "@/interfaces/jcc-logger.interface.js";
 
 export class CIncludeDirectiveLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<false | ICLexeme> {

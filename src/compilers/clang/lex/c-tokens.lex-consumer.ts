@@ -1,7 +1,7 @@
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
-import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface";
-import { C_TOKENS } from "./tokens/tokens";
-import { CLexemeType } from "./interfaces/lexeme-type.interface";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
+import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface.js";
+import { C_TOKENS } from "./tokens/tokens.js";
+import { CLexemeType } from "./interfaces/lexeme-type.interface.js";
 
 export class CTokensLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<false | ICLexeme> {
@@ -23,7 +23,7 @@ export class CTokensLexConsumer implements ICLexConsumer {
 
     if (!token) {
       reader.raise(`Unexpected token: ${tokenValue}`, {
-        selection: tokenValue.length,
+        byteStart: reader.state.byte - (tokenValue.length - 1),
       });
     }
 

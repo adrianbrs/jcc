@@ -1,9 +1,9 @@
-import { JCCError } from "@/errors/jcc.error";
+import { JCCError } from "@/errors/jcc.error.js";
 import { Chalk, ChalkInstance } from "chalk";
 import { createSupportsColor } from "supports-color";
-import { IJCCLogger, JCCLogLevel } from "@/interfaces/jcc-logger.interface";
-import { readLineRange } from "@/helpers/readline";
-import { IJCCReader } from "@/interfaces/jcc-reader.interface";
+import { IJCCLogger, JCCLogLevel } from "@/interfaces/jcc-logger.interface.js";
+import { readLineRange } from "@/helpers/readline.js";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
 import path from "path";
 import util from "util";
 

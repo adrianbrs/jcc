@@ -1,5 +1,5 @@
 import { createCommand } from "commander";
-import { register } from "./commands";
+import { register } from "./commands/index.js";
 
 async function main() {
   const cmd = createCommand("jcc")
