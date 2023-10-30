@@ -1,4 +1,4 @@
-* codigo fonte para testar */
+/* codigo fonte para testar */
 int num1;
 struct data
 {
