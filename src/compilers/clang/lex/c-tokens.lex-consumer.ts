@@ -7,9 +7,7 @@ export class CTokensLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<false | ICLexeme> {
     let tokenValue = char;
 
-    while (true) {
-      const next = await reader.next().then(({ value }) => value as string);
-
+    for await (const next of reader) {
       if (C_TOKENS.hasPrefix(tokenValue + next)) {
         tokenValue += next;
         continue;
