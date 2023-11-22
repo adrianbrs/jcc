@@ -131,43 +131,52 @@ export const C_TOKENS = CTokenDef.make(
       index: 31,
       name: "r_shift",
     },
-    "==": {
+    "<<=": {
       index: 32,
+      name: "l_shift_equal",
+    },
+    ">>=": {
+      index: 33,
+      name: "r_shift_equal",
+    },
+    "==": {
+      index: 34,
       name: "equal_equal",
     },
     "!=": {
-      index: 33,
+      index: 35,
       name: "exclamation_equal",
     },
     "<": {
-      index: 34,
+      index: 36,
       name: "less",
     },
     ">": {
-      index: 35,
+      index: 37,
       name: "greater",
     },
     "<=": {
-      index: 36,
+      index: 38,
       name: "less_equal",
     },
     ">=": {
-      index: 37,
+      index: 39,
       name: "greater_equal",
     },
     "&&": {
-      index: 38,
+      index: 40,
       name: "ampersand_ampersand",
     },
     "||": {
-      index: 39,
+      index: 41,
       name: "pipe_pipe",
     },
     "!": {
-      index: 40,
+      index: 42,
       name: "exclamation",
     },
   } as const,
+  CLexemeType.TOKEN as const,
   {
     substrings: true,
   }

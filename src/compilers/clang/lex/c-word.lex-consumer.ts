@@ -22,13 +22,10 @@ export class CWordLexConsumer implements ICLexConsumer {
 
     // KEYWORD
     if (C_KEYWORDS.has(word)) {
-      const type = CLexemeType.KEYWORD;
       const token = C_KEYWORDS.get(word);
 
       return {
-        id: type + token.index,
-        name: token.name,
-        type,
+        ...token,
         value: word,
       };
     }

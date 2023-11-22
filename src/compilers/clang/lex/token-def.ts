@@ -1,3 +1,6 @@
+import { CLexemeType } from "./interfaces/lexeme-type.interface.js";
+import { ICLexeme } from "./interfaces/lexeme.interface.js";
+
 export interface ICTokenMeta {
   readonly index: number;
   readonly name?: string;
@@ -10,6 +13,8 @@ export interface ICTokenDict {
 export interface ICTokenMetaComputed {
   readonly index: number;
   readonly name: string;
+  readonly type: CLexemeType;
+  readonly id: number;
 }
 
 export type ICTokenDictKeys<T extends ICTokenDict | CTokenDef> = (
@@ -22,13 +27,23 @@ export type ICTokenDictKeys<T extends ICTokenDict | CTokenDef> = (
     : never
   : never;
 
-export type ICTokenDictComputed<T extends ICTokenDict> = {
+export type ICTokenDictComputed<
+  T extends ICTokenDict,
+  U extends CLexemeType
+> = {
   [K in keyof T]: T[K] extends number
-    ? { readonly index: T[K]; readonly name: K }
+    ? {
+        readonly index: T[K];
+        readonly name: K;
+        readonly type: U;
+        readonly id: number;
+      }
     : T[K] extends ICTokenMeta
     ? {
         readonly index: T[K]["index"];
         readonly name: T[K]["name"] extends string ? T[K]["name"] : K;
+        readonly type: U;
+        readonly id: number;
       }
     : never;
 };
@@ -37,24 +52,27 @@ export interface CTokenDefOptions {
   substrings?: boolean;
 }
 
-export class CTokenDef<T extends ICTokenDict = ICTokenDict> extends Map<
-  ICTokenDictKeys<T>,
-  ICTokenMetaComputed
-> {
+export class CTokenDef<
+  T extends ICTokenDict = ICTokenDict,
+  U extends CLexemeType = CLexemeType
+> extends Map<ICTokenDictKeys<T>, ICTokenMetaComputed> {
   private readonly _substrings = new Set<string>();
 
-  constructor(dict: T, options?: CTokenDefOptions) {
+  constructor(dict: T, readonly type: U, options?: CTokenDefOptions) {
     super(
       Object.entries(dict).map(([key, value]) => {
         const isIndexOnly = typeof value === "number";
+        const token = {
+          name: isIndexOnly ? key : value.name ?? key,
+          type,
+          id: type + (isIndexOnly ? value : value.index),
+        } as ICTokenMetaComputed;
 
-        return [
-          key as ICTokenDictKeys<T>,
-          {
-            index: isIndexOnly ? value : value.index,
-            name: isIndexOnly ? key : value.name ?? key,
-          },
-        ];
+        Object.defineProperty(token, "index", {
+          configurable: true,
+        });
+
+        return [key as ICTokenDictKeys<T>, token];
       })
     );
 
@@ -74,7 +92,7 @@ export class CTokenDef<T extends ICTokenDict = ICTokenDict> extends Map<
     return super.has(key as ICTokenDictKeys<T>);
   }
 
-  get<K extends ICTokenDictKeys<T>>(key: K): ICTokenDictComputed<T>[K];
+  get<K extends ICTokenDictKeys<T>>(key: K): ICTokenDictComputed<T, U>[K];
   get(key: string): ICTokenMetaComputed | undefined;
   get(key: ICTokenDictKeys<T>): ICTokenMetaComputed | undefined {
     return super.get(key);
@@ -84,10 +102,11 @@ export class CTokenDef<T extends ICTokenDict = ICTokenDict> extends Map<
     return this._substrings.has(substr);
   }
 
-  static make<T extends Readonly<ICTokenDict>>(
+  static make<T extends Readonly<ICTokenDict>, U extends Readonly<CLexemeType>>(
     dict: T,
+    type: U,
     options?: CTokenDefOptions
   ) {
-    return new CTokenDef<T>(dict, options);
+    return new CTokenDef<T, U>(dict, type, options);
   }
 }

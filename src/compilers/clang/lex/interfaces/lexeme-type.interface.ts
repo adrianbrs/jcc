@@ -1,10 +1,10 @@
 export enum CLexemeType {
   KEYWORD = 1000,
   IDENTIFIER = 2000,
-  NUMBER_LITERAL = 3000,
-  STRING_LITERAL = 4000,
-  CHAR_LITERAL = 4001,
-  TOKEN = 5000,
+  NUMBER_LITERAL = 2001,
+  STRING_LITERAL = 2002,
+  CHAR_LITERAL = 2003,
+  TOKEN = 3000,
 }
 
 export namespace CLexemeType {

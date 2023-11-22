@@ -1,7 +1,6 @@
 import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
 import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface.js";
 import { C_TOKENS } from "./tokens/tokens.js";
-import { CLexemeType } from "./interfaces/lexeme-type.interface.js";
 
 export class CTokensLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<false | ICLexeme> {
@@ -25,12 +24,8 @@ export class CTokensLexConsumer implements ICLexConsumer {
       });
     }
 
-    const type = CLexemeType.TOKEN;
-
     return {
-      id: type + token.index,
-      name: token.name,
-      type,
+      ...token,
       value: tokenValue,
     };
   }
