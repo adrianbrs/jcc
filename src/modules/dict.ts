@@ -7,6 +7,7 @@ export interface IJCCDictNodeJSON {
 
 export interface IJCCDictRuleJSON {
   id: number;
+  name: string;
   comments: string[];
   tree: IJCCDictNodeJSON;
 }
@@ -45,6 +46,7 @@ export class JCCDictRule {
 
   constructor(
     readonly id: number,
+    readonly name: string,
     readonly tree: JCCDictNode = new JCCDictNode()
   ) {
     this.depth = getDepth(tree);
@@ -53,13 +55,18 @@ export class JCCDictRule {
   toJSON(): IJCCDictRuleJSON {
     return {
       id: this.id,
+      name: this.name,
       comments: this.comments,
       tree: this.tree.toJSON(),
     };
   }
 
   static parse(json: IJCCDictRuleJSON): JCCDictRule {
-    const rule = new JCCDictRule(json.id, JCCDictNode.parse(json.tree));
+    const rule = new JCCDictRule(
+      json.id,
+      json.name,
+      JCCDictNode.parse(json.tree)
+    );
     rule.comments.push(...json.comments);
     return rule;
   }

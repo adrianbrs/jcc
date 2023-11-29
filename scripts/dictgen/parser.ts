@@ -13,6 +13,7 @@ export interface ParserOptions {
 
 interface LineData {
   id: number | null;
+  name: string | null;
   comments: string[];
   tokens: number[];
 }
@@ -23,7 +24,6 @@ export class DictParser {
   constructor(readonly options: ParserOptions) {}
 
   getRuleId(name: string): number {
-    name = name.trim();
     if (!this.#ruleIds.has(name)) {
       const id = CLexemeType.TOKEN + 1000 + this.#ruleIds.size;
       this.#ruleIds.set(name, id);
@@ -93,6 +93,7 @@ export class DictParser {
 
     const data: LineData = {
       id: null,
+      name: null,
       comments: [],
       tokens: [],
     };
@@ -111,27 +112,30 @@ export class DictParser {
       return data;
     }
 
-    const [left, right] = def.split(this.options.separator);
+    const [name, definition] = def
+      .split(this.options.separator)
+      .map((str) => str.trim());
 
-    if (!(left && right)) {
+    if (!(name && definition)) {
       throw new Error(
         `Invalid rule definition ${JSON.stringify(def)} on line ${lineNo}`
       );
     }
 
-    const id = this.getRuleId(left);
+    const id = this.getRuleId(name);
 
     if (isNaN(id)) {
-      throw new Error(`Invalid rule id ${left} on line ${lineNo}`);
+      throw new Error(`Invalid rule id ${name} on line ${lineNo}`);
     }
 
-    const tokens = this.getTokens(right);
+    const tokens = this.getTokens(definition);
 
     if (tokens.some((entry) => isNaN(entry))) {
-      throw new Error(`Invalid rule entry ${right} on line ${lineNo}`);
+      throw new Error(`Invalid rule entry ${definition} on line ${lineNo}`);
     }
 
     data.id = id;
+    data.name = name;
     data.tokens = tokens;
 
     return data;
@@ -145,18 +149,18 @@ export class DictParser {
     for (let i = 0; i < lines.length; i++) {
       const lineNo = i + 1;
       const line = lines[i].trim();
-      const { id, comments, tokens } = this.parseLine(line, lineNo);
+      const { id, name, comments, tokens } = this.parseLine(line, lineNo);
 
       if (comments.length) {
         prevComments.push(...comments);
         continue;
       }
 
-      if (id === null) {
+      if (id === null || name == null) {
         continue;
       }
 
-      const rule = ruleMap.get(id) ?? new JCCDictRule(id);
+      const rule = ruleMap.get(id) ?? new JCCDictRule(id, name);
 
       rule.comments.push(...prevComments);
       prevComments = [];
@@ -190,9 +194,11 @@ export class DictParser {
 
     return lines
       .map((line, i) => {
-        const { id, tokens } = this.parseLine(line, i + 1);
+        const { id, name, tokens } = this.parseLine(line, i + 1);
         if (id !== null) {
-          return `${id} ${this.options.separator} ${tokens.join(" ")}`;
+          return `${id} ${this.options.separator} ${tokens.join(
+            " "
+          )} # ${name}`;
         }
         return line;
       })

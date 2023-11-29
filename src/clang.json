@@ -2,6 +2,7 @@
   "rules": [
     {
       "id": 4000,
+      "name": "IDENTIFIER",
       "comments": [],
       "tree": {
         "rules": [],
@@ -17,6 +18,7 @@
     },
     {
       "id": 4001,
+      "name": "SIMPLE_DECLARATION",
       "comments": [
         "Verificar se o identificador já foi declarado no mesmo escopo"
       ],
@@ -39,6 +41,7 @@
     },
     {
       "id": 4003,
+      "name": "SIMPLE_DECLARATION_ASSIGNMENT",
       "comments": [],
       "tree": {
         "rules": [],
@@ -64,6 +67,7 @@
     },
     {
       "id": 4005,
+      "name": "COMPLEX_DECLARATION",
       "comments": [
         "Verificar se o identificador já foi declarado no mesmo escopo"
       ],
@@ -103,6 +107,7 @@
     },
     {
       "id": 4006,
+      "name": "COMPLEX_DECLARATION_ASSIGNMENT",
       "comments": [],
       "tree": {
         "rules": [],
@@ -128,6 +133,7 @@
     },
     {
       "id": 4007,
+      "name": "FUNCTION_DECLARATION",
       "comments": [
         "Verificar se a função já foi declarada antes"
       ],
@@ -239,6 +245,7 @@
     },
     {
       "id": 4008,
+      "name": "FUNCTION_DECLARATION_ARGUMENTS",
       "comments": [],
       "tree": {
         "rules": [],
@@ -270,6 +277,7 @@
     },
     {
       "id": 4002,
+      "name": "TYPE",
       "comments": [],
       "tree": {
         "rules": [],
@@ -334,6 +342,27 @@
               "4002": {
                 "rules": [
                   4002
+                ],
+                "children": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4009,
+      "name": "FUNCTION_IMPLEMENTATION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3000": {
+            "rules": [],
+            "children": {
+              "4007": {
+                "rules": [
+                  4009
                 ],
                 "children": {}
               }
