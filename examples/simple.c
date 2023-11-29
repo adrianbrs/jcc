@@ -1,6 +1,5 @@
-int main()
+int main(int argc)
 {
-  double valor;
-  valor = +6.32;
-  valor = valor - -35.;
+  int a = 1;
+  a += 1;
 }

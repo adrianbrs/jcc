@@ -276,6 +276,48 @@
       }
     },
     {
+      "id": 4009,
+      "name": "FUNCTION_DEFINITION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3001": {
+            "rules": [],
+            "children": {
+              "3000": {
+                "rules": [],
+                "children": {
+                  "4007": {
+                    "rules": [
+                      4009
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "4010": {
+                "rules": [],
+                "children": {
+                  "3000": {
+                    "rules": [],
+                    "children": {
+                      "4007": {
+                        "rules": [
+                          4009
+                        ],
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "id": 4002,
       "name": "TYPE",
       "comments": [],
@@ -351,20 +393,878 @@
       }
     },
     {
-      "id": 4009,
-      "name": "FUNCTION_IMPLEMENTATION",
+      "id": 4010,
+      "name": "STATEMENT_LIST",
       "comments": [],
       "tree": {
         "rules": [],
         "children": {
-          "3000": {
-            "rules": [],
+          "4011": {
+            "rules": [
+              4010
+            ],
             "children": {
-              "4007": {
+              "4010": {
                 "rules": [
-                  4009
+                  4010
                 ],
                 "children": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4011,
+      "name": "STATEMENT",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3009": {
+            "rules": [
+              4011
+            ],
+            "children": {
+              "4001": {
+                "rules": [
+                  4011
+                ],
+                "children": {}
+              },
+              "4003": {
+                "rules": [
+                  4011
+                ],
+                "children": {}
+              },
+              "4004": {
+                "rules": [
+                  4011
+                ],
+                "children": {}
+              },
+              "4005": {
+                "rules": [
+                  4011
+                ],
+                "children": {}
+              },
+              "4006": {
+                "rules": [
+                  4011
+                ],
+                "children": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4012,
+      "name": "PRIMARY_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "2001": {
+            "rules": [
+              4012
+            ],
+            "children": {}
+          },
+          "2002": {
+            "rules": [
+              4012
+            ],
+            "children": {}
+          },
+          "2003": {
+            "rules": [
+              4012
+            ],
+            "children": {}
+          },
+          "3005": {
+            "rules": [],
+            "children": {
+              "4004": {
+                "rules": [],
+                "children": {
+                  "3004": {
+                    "rules": [
+                      4012
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "4000": {
+            "rules": [
+              4012
+            ],
+            "children": {}
+          }
+        }
+      }
+    },
+    {
+      "id": 4013,
+      "name": "POSTFIX_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3003": {
+            "rules": [],
+            "children": {
+              "4004": {
+                "rules": [],
+                "children": {
+                  "3002": {
+                    "rules": [],
+                    "children": {
+                      "4013": {
+                        "rules": [
+                          4013
+                        ],
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "3005": {
+            "rules": [],
+            "children": {
+              "3004": {
+                "rules": [],
+                "children": {
+                  "4013": {
+                    "rules": [
+                      4013
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "3024": {
+            "rules": [],
+            "children": {
+              "4013": {
+                "rules": [
+                  4013
+                ],
+                "children": {}
+              }
+            }
+          },
+          "3025": {
+            "rules": [],
+            "children": {
+              "4013": {
+                "rules": [
+                  4013
+                ],
+                "children": {}
+              }
+            }
+          },
+          "4000": {
+            "rules": [],
+            "children": {
+              "3007": {
+                "rules": [],
+                "children": {
+                  "4013": {
+                    "rules": [
+                      4013
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3037": {
+                "rules": [],
+                "children": {
+                  "3020": {
+                    "rules": [],
+                    "children": {
+                      "4013": {
+                        "rules": [
+                          4013
+                        ],
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4012": {
+            "rules": [
+              4013
+            ],
+            "children": {}
+          }
+        }
+      }
+    },
+    {
+      "id": 4014,
+      "name": "UNARY_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4013": {
+            "rules": [
+              4014
+            ],
+            "children": {}
+          },
+          "4014": {
+            "rules": [],
+            "children": {
+              "3024": {
+                "rules": [
+                  4014
+                ],
+                "children": {}
+              },
+              "3025": {
+                "rules": [
+                  4014
+                ],
+                "children": {}
+              },
+              "4015": {
+                "rules": [
+                  4014
+                ],
+                "children": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4015,
+      "name": "UNARY_OPERATOR",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3019": {
+            "rules": [
+              4015
+            ],
+            "children": {}
+          },
+          "3020": {
+            "rules": [
+              4015
+            ],
+            "children": {}
+          },
+          "3021": {
+            "rules": [
+              4015
+            ],
+            "children": {}
+          },
+          "3026": {
+            "rules": [
+              4015
+            ],
+            "children": {}
+          },
+          "3029": {
+            "rules": [
+              4015
+            ],
+            "children": {}
+          },
+          "3042": {
+            "rules": [
+              4015
+            ],
+            "children": {}
+          }
+        }
+      }
+    },
+    {
+      "id": 4016,
+      "name": "MULTIPLICATIVE_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4014": {
+            "rules": [
+              4016
+            ],
+            "children": {
+              "3021": {
+                "rules": [],
+                "children": {
+                  "4016": {
+                    "rules": [
+                      4016
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3022": {
+                "rules": [],
+                "children": {
+                  "4016": {
+                    "rules": [
+                      4016
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3023": {
+                "rules": [],
+                "children": {
+                  "4016": {
+                    "rules": [
+                      4016
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4017,
+      "name": "ADDITIVE_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4016": {
+            "rules": [
+              4017
+            ],
+            "children": {
+              "3019": {
+                "rules": [],
+                "children": {
+                  "4017": {
+                    "rules": [
+                      4017
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3020": {
+                "rules": [],
+                "children": {
+                  "4017": {
+                    "rules": [
+                      4017
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4018,
+      "name": "SHIFT_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4017": {
+            "rules": [
+              4018
+            ],
+            "children": {
+              "3030": {
+                "rules": [],
+                "children": {
+                  "4018": {
+                    "rules": [
+                      4018
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3031": {
+                "rules": [],
+                "children": {
+                  "4018": {
+                    "rules": [
+                      4018
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4019,
+      "name": "RELATIONAL_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4018": {
+            "rules": [
+              4019
+            ],
+            "children": {
+              "3036": {
+                "rules": [],
+                "children": {
+                  "4019": {
+                    "rules": [
+                      4019
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3037": {
+                "rules": [],
+                "children": {
+                  "4019": {
+                    "rules": [
+                      4019
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3038": {
+                "rules": [],
+                "children": {
+                  "4019": {
+                    "rules": [
+                      4019
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3039": {
+                "rules": [],
+                "children": {
+                  "4019": {
+                    "rules": [
+                      4019
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4020,
+      "name": "EQUALITY_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4019": {
+            "rules": [
+              4020
+            ],
+            "children": {
+              "3034": {
+                "rules": [],
+                "children": {
+                  "4020": {
+                    "rules": [
+                      4020
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3035": {
+                "rules": [],
+                "children": {
+                  "4020": {
+                    "rules": [
+                      4020
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4021,
+      "name": "AND_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4020": {
+            "rules": [
+              4021
+            ],
+            "children": {
+              "3026": {
+                "rules": [],
+                "children": {
+                  "4021": {
+                    "rules": [
+                      4021
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4022,
+      "name": "EXCLUSIVE_OR_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4021": {
+            "rules": [
+              4022
+            ],
+            "children": {
+              "3028": {
+                "rules": [],
+                "children": {
+                  "4022": {
+                    "rules": [
+                      4022
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4023,
+      "name": "INCLUSIVE_OR_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4022": {
+            "rules": [
+              4023
+            ],
+            "children": {
+              "3027": {
+                "rules": [],
+                "children": {
+                  "4023": {
+                    "rules": [
+                      4023
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4024,
+      "name": "LOGICAL_AND_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4023": {
+            "rules": [
+              4024
+            ],
+            "children": {
+              "3040": {
+                "rules": [],
+                "children": {
+                  "4024": {
+                    "rules": [
+                      4024
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4025,
+      "name": "LOGICAL_OR_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4024": {
+            "rules": [
+              4025
+            ],
+            "children": {
+              "3041": {
+                "rules": [],
+                "children": {
+                  "4025": {
+                    "rules": [
+                      4025
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4026,
+      "name": "CONDITIONAL_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4025": {
+            "rules": [
+              4026
+            ],
+            "children": {}
+          },
+          "4026": {
+            "rules": [],
+            "children": {
+              "3010": {
+                "rules": [],
+                "children": {
+                  "4004": {
+                    "rules": [],
+                    "children": {
+                      "3006": {
+                        "rules": [],
+                        "children": {
+                          "4025": {
+                            "rules": [
+                              4026
+                            ],
+                            "children": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4027,
+      "name": "ASSIGNMENT_EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4004": {
+            "rules": [],
+            "children": {
+              "4028": {
+                "rules": [],
+                "children": {
+                  "4000": {
+                    "rules": [
+                      4027
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "4026": {
+            "rules": [
+              4027
+            ],
+            "children": {}
+          },
+          "4027": {
+            "rules": [],
+            "children": {
+              "3011": {
+                "rules": [],
+                "children": {
+                  "4014": {
+                    "rules": [
+                      4027
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "4028": {
+                "rules": [],
+                "children": {
+                  "4014": {
+                    "rules": [
+                      4027
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4028,
+      "name": "ASSIGNMENT_OPERATOR",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3012": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          },
+          "3013": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          },
+          "3014": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          },
+          "3015": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          },
+          "3016": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          },
+          "3017": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          },
+          "3018": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          },
+          "3032": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          },
+          "3033": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          },
+          "3043": {
+            "rules": [
+              4028
+            ],
+            "children": {}
+          }
+        }
+      }
+    },
+    {
+      "id": 4004,
+      "name": "EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4027": {
+            "rules": [
+              4004
+            ],
+            "children": {
+              "3008": {
+                "rules": [],
+                "children": {
+                  "4004": {
+                    "rules": [
+                      4004
+                    ],
+                    "children": {}
+                  }
+                }
               }
             }
           }

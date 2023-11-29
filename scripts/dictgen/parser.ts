@@ -49,13 +49,25 @@ export class DictParser {
 
       // WORDS
       if (/^\w+$/.test(entry)) {
-        if (entry === "id") {
-          tokens.push(CLexemeType.IDENTIFIER);
-          continue;
-        }
-        if (C_KEYWORDS.has(entry)) {
-          tokens.push(C_KEYWORDS.get(entry)!.id);
-          continue;
+        switch (entry) {
+          case "id":
+            tokens.push(CLexemeType.IDENTIFIER);
+            continue;
+          case "number_literal":
+            tokens.push(CLexemeType.NUMBER_LITERAL);
+            continue;
+          case "string_literal":
+            tokens.push(CLexemeType.STRING_LITERAL);
+            continue;
+          case "char_literal":
+            tokens.push(CLexemeType.CHAR_LITERAL);
+            continue;
+          default:
+            if (C_KEYWORDS.has(entry)) {
+              tokens.push(C_KEYWORDS.get(entry)!.id);
+              continue;
+            }
+            break;
         }
       }
 
@@ -67,6 +79,10 @@ export class DictParser {
         const token = entry.slice(0, i);
 
         if (C_TOKENS.has(token)) {
+          if (C_TOKENS.hasPrefix(token + entry[i])) {
+            i++;
+            continue;
+          }
           tokens.push(C_TOKENS.get(token)!.id);
           entry = entry.slice(i);
           i = 1;
@@ -194,11 +210,11 @@ export class DictParser {
 
     return lines
       .map((line, i) => {
-        const { id, name, tokens } = this.parseLine(line, i + 1);
+        const { id, tokens } = this.parseLine(line, i + 1);
         if (id !== null) {
           return `${id} ${this.options.separator} ${tokens.join(
             " "
-          )} # ${name}`;
+          )} # ${line}`;
         }
         return line;
       })

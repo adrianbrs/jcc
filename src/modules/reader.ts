@@ -88,10 +88,7 @@ export class JCCReader extends EventEmitter implements IJCCReader {
     });
   }
 
-  raise(
-    message: string,
-    options?: Omit<IJCCErrorOptions, keyof IJCCFileState> | undefined
-  ): never {
+  raise(message: string, options?: IJCCErrorOptions | undefined): never {
     throw this.makeError(message, options);
   }
 

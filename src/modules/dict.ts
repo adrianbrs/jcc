@@ -76,7 +76,6 @@ export class JCCDict implements Iterable<JCCDictRule> {
   #ruleMap = new Map<number, JCCDictRule>();
 
   constructor(readonly rules: JCCDictRule[] = []) {
-    this.rules.sort((ra, rb) => rb.depth - ra.depth);
     for (const rule of rules) {
       this.#ruleMap.set(rule.id, rule);
     }

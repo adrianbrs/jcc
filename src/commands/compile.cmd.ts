@@ -12,9 +12,40 @@ import { JCCLogger } from "@/modules/logger.js";
 import { JCCReader } from "@/modules/reader.js";
 import clangDictionary from "@/clang.json";
 import { ICLexeme } from "@/compilers/clang/lex/interfaces/lexeme.interface.js";
+import { IJCCFileState } from "@/interfaces/jcc-file-state.interface.js";
+import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
 
 interface CompileOptions {
   encoding: BufferEncoding;
+}
+
+class Context {
+  #state: IJCCFileState;
+  #rule?: JCCDictRule;
+
+  get state() {
+    return this.#state;
+  }
+
+  get rule() {
+    return this.#rule;
+  }
+
+  constructor(readonly reader: IJCCReader) {
+    this.#state = reader.state;
+  }
+
+  update(rule?: JCCDictRule) {
+    this.#state = this.reader.state;
+    this.#rule = rule;
+  }
+
+  toJSON() {
+    return {
+      state: this.state,
+      rule: this.rule,
+    };
+  }
 }
 
 export const compile: ICommand = (parent) => {
@@ -68,8 +99,10 @@ export const compile: ICommand = (parent) => {
 
       await shift();
 
+      const context = new Context(reader);
+
       while (stack.length) {
-        console.log(stack.map((item) => item.id));
+        // console.log(stack.map((item) => item.id));
         const item = stack.pop()!;
         const rules = dict.findByTokenId(item.id);
 
@@ -85,6 +118,7 @@ export const compile: ICommand = (parent) => {
         let matched = false;
         for (const rule of rules) {
           let node: JCCDictNode = rule.tree.get(item.id)!;
+          let lastValidNode: JCCDictNode = node;
 
           // walk rule tree
           const rollback: (JCCDictRule | ICLexeme)[] = [];
@@ -99,16 +133,28 @@ export const compile: ICommand = (parent) => {
 
             rollback.push(next);
             node = node.get(next.id)!;
+
+            if (node.rules.includes(rule.id)) {
+              lastValidNode = node;
+              rollback.length = 0;
+            }
           }
 
+          stack.push(...rollback.reverse());
+
           // rule not matched, rollback the whole stack
-          if (!node.rules.includes(rule.id)) {
-            stack.push(...rollback.reverse());
+          if (!lastValidNode.rules.includes(rule.id)) {
             continue;
           }
 
           stack.push(rule);
+          context.update(rule);
           matched = true;
+
+          // rule validations
+          if (rule.comments.length > 0) {
+            console.log(rule.comments);
+          }
           break;
         }
 
@@ -121,6 +167,15 @@ export const compile: ICommand = (parent) => {
         if (!(await shift())) {
           break;
         }
+      }
+
+      if (stack.length > 1) {
+        reader.raise(
+          `invalid syntax ${JSON.stringify(context.rule?.name ?? "UNKNOWN")}`,
+          {
+            byteStart: context.state.byte,
+          }
+        );
       }
     } catch (err) {
       await errorHandler.handle(err);
