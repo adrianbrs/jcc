@@ -10,7 +10,9 @@
     "start:dev": "NODE_ENV=development tsx src/index.ts",
     "clang:lex": "clang -fsyntax-only -Xclang -dump-tokens",
     "start": "node ./bin/jcc.js",
-    "jcc": "./bin/jcc.js"
+    "jcc": "./bin/jcc.js",
+    "dict:gen": "tsx scripts/dictgen/index.ts",
+    "dict:update": "pnpm dict:gen dict/clang.bnf -t dict/clang.tokens.bnf -o src/clang.json"
   },
   "bin": {
     "jcc": "./bin/jcc.js"
