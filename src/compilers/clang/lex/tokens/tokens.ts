@@ -175,6 +175,10 @@ export const C_TOKENS = CTokenDef.make(
       index: 42,
       name: "exclamation",
     },
+    "^=": {
+      index: 43,
+      name: "caret_equal",
+    },
   } as const,
   CLexemeType.TOKEN as const,
   {

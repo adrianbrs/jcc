@@ -1,0 +1,346 @@
+{
+  "rules": [
+    {
+      "id": 4000,
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "2000": {
+            "rules": [
+              4000
+            ],
+            "children": {}
+          }
+        }
+      }
+    },
+    {
+      "id": 4001,
+      "comments": [
+        "Verificar se o identificador já foi declarado no mesmo escopo"
+      ],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4000": {
+            "rules": [],
+            "children": {
+              "4002": {
+                "rules": [
+                  4001
+                ],
+                "children": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4003,
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4004": {
+            "rules": [],
+            "children": {
+              "3011": {
+                "rules": [],
+                "children": {
+                  "4001": {
+                    "rules": [
+                      4003
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4005,
+      "comments": [
+        "Verificar se o identificador já foi declarado no mesmo escopo"
+      ],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4000": {
+            "rules": [],
+            "children": {
+              "3008": {
+                "rules": [],
+                "children": {
+                  "4001": {
+                    "rules": [
+                      4005
+                    ],
+                    "children": {}
+                  },
+                  "4005": {
+                    "rules": [
+                      4005
+                    ],
+                    "children": {}
+                  },
+                  "4006": {
+                    "rules": [
+                      4005
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4006,
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4004": {
+            "rules": [],
+            "children": {
+              "3011": {
+                "rules": [],
+                "children": {
+                  "4005": {
+                    "rules": [
+                      4006
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4007,
+      "comments": [
+        "Verificar se a função já foi declarada antes"
+      ],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3005": {
+            "rules": [],
+            "children": {
+              "3004": {
+                "rules": [],
+                "children": {
+                  "4001": {
+                    "rules": [
+                      4007
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "3007": {
+                "rules": [],
+                "children": {
+                  "3007": {
+                    "rules": [],
+                    "children": {
+                      "3007": {
+                        "rules": [],
+                        "children": {
+                          "3008": {
+                            "rules": [],
+                            "children": {
+                              "4001": {
+                                "rules": [],
+                                "children": {
+                                  "3004": {
+                                    "rules": [],
+                                    "children": {
+                                      "4001": {
+                                        "rules": [
+                                          4007
+                                        ],
+                                        "children": {}
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "4008": {
+                                "rules": [],
+                                "children": {
+                                  "3004": {
+                                    "rules": [],
+                                    "children": {
+                                      "4001": {
+                                        "rules": [
+                                          4007
+                                        ],
+                                        "children": {}
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "4001": {
+                "rules": [],
+                "children": {
+                  "3004": {
+                    "rules": [],
+                    "children": {
+                      "4001": {
+                        "rules": [
+                          4007
+                        ],
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              },
+              "4008": {
+                "rules": [],
+                "children": {
+                  "3004": {
+                    "rules": [],
+                    "children": {
+                      "4001": {
+                        "rules": [
+                          4007
+                        ],
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4008,
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4001": {
+            "rules": [],
+            "children": {
+              "3008": {
+                "rules": [],
+                "children": {
+                  "4001": {
+                    "rules": [
+                      4008
+                    ],
+                    "children": {}
+                  },
+                  "4008": {
+                    "rules": [
+                      4008
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4002,
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "1003": {
+            "rules": [
+              4002
+            ],
+            "children": {}
+          },
+          "1008": {
+            "rules": [
+              4002
+            ],
+            "children": {}
+          },
+          "1012": {
+            "rules": [
+              4002
+            ],
+            "children": {}
+          },
+          "1017": {
+            "rules": [
+              4002
+            ],
+            "children": {}
+          },
+          "1018": {
+            "rules": [
+              4002
+            ],
+            "children": {}
+          },
+          "1022": {
+            "rules": [
+              4002
+            ],
+            "children": {}
+          },
+          "1023": {
+            "rules": [
+              4002
+            ],
+            "children": {}
+          },
+          "1030": {
+            "rules": [
+              4002
+            ],
+            "children": {}
+          },
+          "1031": {
+            "rules": [
+              4002
+            ],
+            "children": {}
+          },
+          "4002": {
+            "rules": [],
+            "children": {
+              "4002": {
+                "rules": [
+                  4002
+                ],
+                "children": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
