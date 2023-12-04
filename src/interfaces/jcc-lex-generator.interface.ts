@@ -17,6 +17,8 @@ export interface IJCCLexGeneratorOptions<
 
 export interface IJCCLexeme {
   value: string;
+  byteStart?: number;
+  byteEnd?: number;
 }
 
 export interface IJCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>

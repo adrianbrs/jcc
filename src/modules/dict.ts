@@ -70,12 +70,20 @@ export class JCCDictRule<T extends IJCCLexeme = IJCCLexeme> {
     return this.#lexemes;
   }
 
-  getTokens(): (T | JCCDictRule<T>)[] {
-    return [...this.#tokens];
+  getTokens<U extends T | JCCDictRule<T>>(): U[] {
+    return [...this.#tokens] as U[];
   }
 
-  getToken(index: number): T | JCCDictRule<T> {
-    return this.#tokens[index];
+  getToken<U extends T | JCCDictRule<T>>(index: number): U {
+    return this.#tokens[index] as U;
+  }
+
+  getFirstToken<U extends T | JCCDictRule<T>>(): U {
+    return this.getToken(0);
+  }
+
+  getLastToken<U extends T | JCCDictRule<T>>(): U {
+    return this.#tokens[this.#tokens.length - 1] as U;
   }
 
   toJSON(): IJCCDictRuleJSON {

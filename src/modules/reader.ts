@@ -77,7 +77,11 @@ export class JCCReader extends EventEmitter implements IJCCReader {
 
     const [line, column] =
       typeof options?.byteStart !== "undefined"
-        ? this.getLineAndColumn(options.byteStart)
+        ? this.getLineAndColumn(
+            options.byteStart < 0
+              ? state.byte - options.byteStart
+              : options.byteStart
+          )
         : [state.line, state.column];
 
     return new JCCError(message, {

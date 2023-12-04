@@ -9,6 +9,6 @@ export enum ICSintDeclarationKind {
 export interface ICSintDeclaration {
   type: JCCDictRule<ICLexeme>;
   identifier: ICLexeme;
-  kind: ICSintDeclarationKind;
-  assignment: JCCDictRule<ICLexeme> | null;
+  kind?: ICSintDeclarationKind;
+  assignment?: JCCDictRule<ICLexeme>;
 }

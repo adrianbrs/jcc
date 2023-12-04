@@ -49,7 +49,11 @@ export class JCCLexGenerator<TLexeme extends IJCCLexeme = IJCCLexeme>
 
       return {
         done: false,
-        value: lexeme,
+        value: {
+          ...lexeme,
+          byteStart: this.reader.state.byte - (lexeme.value.length - 1),
+          byteEnd: this.reader.state.byte,
+        },
       };
     });
   }

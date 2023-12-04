@@ -1,21 +1,16 @@
 import { JCCDictRule } from "@/modules/dict.js";
 import { ICLexeme } from "../../lex/interfaces/lexeme.interface.js";
-import { checkRule } from "@/helpers/dict.js";
 import { CSintContext } from "../context.js";
 import { ICSintWorker } from "../interfaces/worker.interface.js";
 import { CSintRule } from "../rules.js";
 import { getTypeName, isTypeValid } from "../types.js";
 
-export class CSintTypes implements ICSintWorker {
-  readonly rules = [CSintRule.TYPE];
+export class CSintTypesWorker implements ICSintWorker {
+  readonly tokens = new Set([CSintRule.TYPE]);
 
   constructor(readonly ctx: CSintContext) {}
 
-  use(rule: JCCDictRule<ICLexeme>) {
-    if (!checkRule(rule, CSintRule.TYPE)) {
-      return false;
-    }
-
+  use(rule: JCCDictRule<ICLexeme>): number {
     const lexemes = rule.getLexemes();
 
     if (!isTypeValid(lexemes)) {
@@ -29,6 +24,6 @@ export class CSintTypes implements ICSintWorker {
       );
     }
 
-    return true;
+    return 0;
   }
 }

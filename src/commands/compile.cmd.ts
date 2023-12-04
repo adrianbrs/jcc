@@ -115,11 +115,6 @@ export const compile: ICommand = (parent) => {
         const item = context.stack.pop()!;
         const rules = dict.findByTokenId(item.id);
 
-        // Use rule validations
-        if (item instanceof JCCDictRule) {
-          context.use(item);
-        }
-
         if (!rules.length) {
           context.stack.push(item); // rollback
 
@@ -165,6 +160,13 @@ export const compile: ICommand = (parent) => {
         }
 
         if (matched) {
+          // Use token
+          const result = context.use(item);
+          if (result) {
+            for (let i = 0; i < Math.abs(result); i++) {
+              context = result < 0 ? context.exit()! : context.fork();
+            }
+          }
           continue;
         }
 

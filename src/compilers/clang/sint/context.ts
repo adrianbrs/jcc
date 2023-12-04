@@ -1,19 +1,18 @@
 import { JCCContext } from "@/modules/context.js";
 import { ICLexeme } from "../lex/interfaces/lexeme.interface.js";
 import { JCCDictRule } from "@/modules/dict.js";
-import { CSintDeclarations } from "./workers/declarations.worker.js";
 import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
-import { ICSintWorker } from "./interfaces/worker.interface.js";
-import { CSintTypes } from "./workers/types.worker.js";
-import { CSintFunctions } from "./workers/functions.worker.js";
+import {
+  ICSintWorker,
+  ICSintWorkerConstructor,
+} from "./interfaces/worker.interface.js";
+import { workers } from "./workers/index.js";
 
 export class CSintContext
   extends JCCContext<ICLexeme, CSintContext>
   implements ICSintWorker
 {
-  readonly declarations: CSintDeclarations;
-  readonly types: CSintTypes;
-  readonly functions: CSintFunctions;
+  #workers = new Map<ICSintWorkerConstructor, ICSintWorker>();
 
   constructor(
     readonly reader: IJCCReader,
@@ -22,13 +21,22 @@ export class CSintContext
   ) {
     super(reader, id, prev);
 
-    this.declarations = new CSintDeclarations(this);
-    this.types = new CSintTypes(this);
-    this.functions = new CSintFunctions(this);
+    for (const Worker of workers) {
+      this.#workers.set(Worker, new Worker(this));
+    }
   }
 
-  use(rule: JCCDictRule<ICLexeme>): boolean {
-    return this.types.use(rule) || this.declarations.use(rule);
+  use(token: ICLexeme | JCCDictRule<ICLexeme>): number {
+    return Array.from(this.#workers.values()).reduce((res, worker) => {
+      if (!worker.tokens || worker.tokens.has(token.id)) {
+        return res + worker.use(token);
+      }
+      return res;
+    }, 0);
+  }
+
+  getWorker<T extends ICSintWorkerConstructor>(Worker: T): InstanceType<T> {
+    return this.#workers.get(Worker) as InstanceType<T>;
   }
 
   fork() {
