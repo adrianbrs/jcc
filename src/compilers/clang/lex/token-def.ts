@@ -1,5 +1,4 @@
 import { CLexemeType } from "./interfaces/lexeme-type.interface.js";
-import { ICLexeme } from "./interfaces/lexeme.interface.js";
 
 export interface ICTokenMeta {
   readonly index: number;
@@ -15,6 +14,7 @@ export interface ICTokenMetaComputed {
   readonly name: string;
   readonly type: CLexemeType;
   readonly id: number;
+  readonly value: string;
 }
 
 export type ICTokenDictKeys<T extends ICTokenDict | CTokenDef> = (
@@ -37,6 +37,7 @@ export type ICTokenDictComputed<
         readonly name: K;
         readonly type: U;
         readonly id: number;
+        readonly value: K;
       }
     : T[K] extends ICTokenMeta
     ? {
@@ -44,6 +45,7 @@ export type ICTokenDictComputed<
         readonly name: T[K]["name"] extends string ? T[K]["name"] : K;
         readonly type: U;
         readonly id: number;
+        readonly value: K;
       }
     : never;
 };
@@ -57,6 +59,7 @@ export class CTokenDef<
   U extends CLexemeType = CLexemeType
 > extends Map<ICTokenDictKeys<T>, ICTokenMetaComputed> {
   private readonly _substrings = new Set<string>();
+  private readonly _byId = new Map<number, ICTokenMetaComputed>();
 
   constructor(dict: T, readonly type: U, options?: CTokenDefOptions) {
     super(
@@ -66,6 +69,7 @@ export class CTokenDef<
           name: isIndexOnly ? key : value.name ?? key,
           type,
           id: type + (isIndexOnly ? value : value.index),
+          value: key,
         } as ICTokenMetaComputed;
 
         Object.defineProperty(token, "index", {
@@ -75,6 +79,11 @@ export class CTokenDef<
         return [key as ICTokenDictKeys<T>, token];
       })
     );
+
+    // Compute byId
+    for (const [_, value] of this) {
+      this._byId.set(value.id, value);
+    }
 
     // Compute substrings
     if (options?.substrings) {
@@ -100,6 +109,10 @@ export class CTokenDef<
 
   hasPrefix(substr: string): boolean {
     return this._substrings.has(substr);
+  }
+
+  getById(id: number): ICTokenMetaComputed | undefined {
+    return this._byId.get(id);
   }
 
   static make<T extends Readonly<ICTokenDict>, U extends Readonly<CLexemeType>>(

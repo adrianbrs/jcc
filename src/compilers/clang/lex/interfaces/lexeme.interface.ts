@@ -6,6 +6,7 @@ import { CLexemeType } from "./lexeme-type.interface.js";
 
 export interface ICLexeme extends IJCCLexeme {
   id: number;
+  key?: number;
   type: CLexemeType;
   name: string;
 }

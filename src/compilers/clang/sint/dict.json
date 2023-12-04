@@ -1,0 +1,324 @@
+{
+  "rules": [
+    {
+      "id": 4000,
+      "name": "SINGLE_DECLARATION",
+      "comments": [
+        "Verificar se o identificador já foi declarado no mesmo escopo"
+      ],
+      "tree": {
+        "rules": [],
+        "children": {
+          "2000": {
+            "rules": [],
+            "children": {
+              "4001": {
+                "rules": [
+                  4000
+                ],
+                "children": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4002,
+      "name": "MULTIPLE_DECLARATION",
+      "comments": [
+        "Verificar se algum dos identificadores já foi declarado no mesmo escopo"
+      ],
+      "tree": {
+        "rules": [],
+        "children": {
+          "2000": {
+            "rules": [],
+            "children": {
+              "3008": {
+                "rules": [],
+                "children": {
+                  "4003": {
+                    "rules": [
+                      4002
+                    ],
+                    "children": {}
+                  },
+                  "4004": {
+                    "rules": [
+                      4002
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4004,
+      "name": "DECLARATION_ASSIGNMENT",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4005": {
+            "rules": [],
+            "children": {
+              "3011": {
+                "rules": [],
+                "children": {
+                  "4003": {
+                    "rules": [
+                      4004
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4003,
+      "name": "DECLARATION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4000": {
+            "rules": [
+              4003
+            ],
+            "children": {}
+          },
+          "4002": {
+            "rules": [
+              4003
+            ],
+            "children": {}
+          }
+        }
+      }
+    },
+    {
+      "id": 4006,
+      "name": "TYPE_PRIMITIVE",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "1003": {
+            "rules": [
+              4006
+            ],
+            "children": {}
+          },
+          "1008": {
+            "rules": [
+              4006
+            ],
+            "children": {}
+          },
+          "1012": {
+            "rules": [
+              4006
+            ],
+            "children": {}
+          },
+          "1017": {
+            "rules": [
+              4006
+            ],
+            "children": {}
+          },
+          "1018": {
+            "rules": [
+              4006
+            ],
+            "children": {}
+          },
+          "1022": {
+            "rules": [
+              4006
+            ],
+            "children": {}
+          },
+          "1023": {
+            "rules": [
+              4006
+            ],
+            "children": {}
+          },
+          "1030": {
+            "rules": [
+              4006
+            ],
+            "children": {}
+          },
+          "1031": {
+            "rules": [
+              4006
+            ],
+            "children": {}
+          }
+        }
+      }
+    },
+    {
+      "id": 4001,
+      "name": "TYPE",
+      "comments": [
+        "Verificar a compatibilidade de tipos"
+      ],
+      "tree": {
+        "rules": [],
+        "children": {
+          "4001": {
+            "rules": [],
+            "children": {
+              "4001": {
+                "rules": [
+                  4001
+                ],
+                "children": {}
+              }
+            }
+          },
+          "4006": {
+            "rules": [
+              4001
+            ],
+            "children": {}
+          }
+        }
+      }
+    },
+    {
+      "id": 4007,
+      "name": "FUNCTION_DECLARATION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3005": {
+            "rules": [],
+            "children": {
+              "3004": {
+                "rules": [],
+                "children": {
+                  "4003": {
+                    "rules": [
+                      4007
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4008,
+      "name": "STATEMENT",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3009": {
+            "rules": [
+              4008
+            ],
+            "children": {
+              "4003": {
+                "rules": [
+                  4008
+                ],
+                "children": {}
+              },
+              "4004": {
+                "rules": [
+                  4008
+                ],
+                "children": {}
+              },
+              "4007": {
+                "rules": [
+                  4008
+                ],
+                "children": {}
+              }
+            }
+          },
+          "4008": {
+            "rules": [],
+            "children": {
+              "4008": {
+                "rules": [
+                  4008
+                ],
+                "children": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4005,
+      "name": "EXPRESSION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "2000": {
+            "rules": [
+              4005
+            ],
+            "children": {}
+          },
+          "2001": {
+            "rules": [
+              4005
+            ],
+            "children": {}
+          },
+          "2002": {
+            "rules": [
+              4005
+            ],
+            "children": {}
+          },
+          "2003": {
+            "rules": [
+              4005
+            ],
+            "children": {}
+          },
+          "3005": {
+            "rules": [],
+            "children": {
+              "4005": {
+                "rules": [],
+                "children": {
+                  "3004": {
+                    "rules": [
+                      4005
+                    ],
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
 import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface.js";
-import { C_TOKENS } from "./tokens/tokens.js";
+import { C_TOKENS } from "./lexemes/tokens.js";
 
 export class CTokensLexConsumer implements ICLexConsumer {
   async consume(char: string, reader: IJCCReader): Promise<false | ICLexeme> {

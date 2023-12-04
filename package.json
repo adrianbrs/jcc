@@ -12,7 +12,7 @@
     "start": "node ./bin/jcc.js",
     "jcc": "./bin/jcc.js",
     "dict:gen": "tsx scripts/dictgen/index.ts",
-    "dict:update": "pnpm dict:gen dict/clang.bnf -t dict/clang.tokens.bnf -o src/clang.json"
+    "dict:update": "pnpm dict:gen dict/clang.bnf -t dict/clang.tokens.bnf -e src/compilers/clang/sint/rules.ts -n CSintRule -o src/compilers/clang/sint/dict.json"
   },
   "bin": {
     "jcc": "./bin/jcc.js"

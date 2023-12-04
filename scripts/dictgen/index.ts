@@ -1,13 +1,14 @@
 import { createCommand } from "commander";
 import { existsSync } from "fs";
-import { readFile, writeFile } from "fs/promises";
-import { JCCDict } from "../../src/modules/dict";
-import path from "path";
+import { writeFile } from "fs/promises";
 import { DictParser, ParserOptions } from "./parser.ts";
+import path from "path";
 
 interface Options extends ParserOptions {
   output: string;
   transform?: string;
+  enum?: string;
+  enumName: string;
   compress: boolean;
 }
 
@@ -26,6 +27,12 @@ async function bootstrap() {
   cmd.option(
     "-t, --transform <output>",
     "Output grammar file with tokens replaced by their IDs"
+  );
+  cmd.option("-e, --enum <output>", "Output enum file with token' IDs");
+  cmd.option(
+    "-n, --enum-name <name>",
+    "Enum name for the generated enum file",
+    "JCCSintRules"
   );
   cmd.option("--compress", "Compress output file", false);
 
@@ -53,6 +60,15 @@ async function bootstrap() {
       );
       const transformed = await parser.transform(inputFilepath);
       await writeFile(transformOutputFilepath, transformed, "utf-8");
+    }
+
+    if (options.enum) {
+      const enumOutputFilepath = path.resolve(process.cwd(), options.enum);
+      const enumFile = await parser.generateEnum(
+        inputFilepath,
+        options.enumName
+      );
+      await writeFile(enumOutputFilepath, enumFile, "utf-8");
     }
 
     console.log(

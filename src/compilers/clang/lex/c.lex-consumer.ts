@@ -10,7 +10,7 @@ import { ICLexConsumer, ICLexeme } from "./interfaces/lexeme.interface.js";
 import { CNumberLexConsumer } from "./c-number.lex-consumer.js";
 import { CTokensLexConsumer } from "./c-tokens.lex-consumer.js";
 import { CCommentLexConsumer } from "./c-comment.lex-consumer.js";
-import { C_TOKENS } from "./tokens/tokens.js";
+import { C_TOKENS } from "./lexemes/tokens.js";
 import { CDirectivesLexConsumer } from "./c-directives.lex-consumer.js";
 import { CStringLexConsumer } from "./c-string.lex-consumer.js";
 import { ICPreprocessorConstantMap } from "./interfaces/preprocessor-constants.interface.js";

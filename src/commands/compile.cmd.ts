@@ -10,42 +10,31 @@ import { JCCErrorHandler } from "@/modules/error-handler.js";
 import { JCCLexGenerator } from "@/modules/lex-generator.js";
 import { JCCLogger } from "@/modules/logger.js";
 import { JCCReader } from "@/modules/reader.js";
-import clangDictionary from "@/clang.json";
+import clangDictionary from "@/compilers/clang/sint/dict.json";
 import { ICLexeme } from "@/compilers/clang/lex/interfaces/lexeme.interface.js";
 import { IJCCFileState } from "@/interfaces/jcc-file-state.interface.js";
 import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
+import util from "util";
+import { CLexemeType } from "@/compilers/clang/lex/interfaces/lexeme-type.interface.js";
+import { IJCCLexeme } from "@/interfaces/jcc-lex-generator.interface.js";
+import { CSintContext } from "@/compilers/clang/sint/context.js";
+import { getLexeme } from "@/compilers/clang/lex/lexemes/index.js";
 
 interface CompileOptions {
   encoding: BufferEncoding;
 }
 
-class Context {
-  #state: IJCCFileState;
-  #rule?: JCCDictRule;
+interface IContext<T extends IJCCLexeme = IJCCLexeme> {
+  id: number;
+  state: IJCCFileState;
+  readonly reader: IJCCReader;
+  readonly stack: (T | JCCDictRule<T>)[];
 
-  get state() {
-    return this.#state;
-  }
-
-  get rule() {
-    return this.#rule;
-  }
-
-  constructor(readonly reader: IJCCReader) {
-    this.#state = reader.state;
-  }
-
-  update(rule?: JCCDictRule) {
-    this.#state = this.reader.state;
-    this.#rule = rule;
-  }
-
-  toJSON() {
-    return {
-      state: this.state,
-      rule: this.rule,
-    };
-  }
+  addDeclaration(id: string, tokens: (T | JCCDictRule<T>)[]): void;
+  hasDeclaration(id: string, onlySelf?: boolean): boolean;
+  getDeclaration(id: string, onlySelf?: boolean): (T | JCCDictRule<T>)[] | null;
+  fork(): IContext;
+  exit(): IContext | null;
 }
 
 export const compile: ICommand = (parent) => {
@@ -82,9 +71,19 @@ export const compile: ICommand = (parent) => {
         await errorHandler.handle(err);
       });
 
-      const dict = loadDict(clangDictionary as unknown as IJCCDictJSON);
+      const dict = loadDict<ICLexeme>(
+        clangDictionary as unknown as IJCCDictJSON
+      );
 
-      const stack: (ICLexeme | JCCDictRule)[] = [];
+      let context = new CSintContext(reader);
+
+      // const fork = () => {
+      //   context = context.fork();
+      // };
+
+      // const exit = () => {
+      //   context = context.exit()!;
+      // };
 
       const shift = async () => {
         return lexGenerator.next().then((res) => {
@@ -92,22 +91,37 @@ export const compile: ICommand = (parent) => {
             return false;
           }
 
-          stack.push(res.value);
+          context.stack.push(res.value);
           return true;
         });
       };
 
       await shift();
 
-      const context = new Context(reader);
+      while (context.stack.length) {
+        console.log(
+          context.stack.map((item) => item.name).join(" ") +
+            " " +
+            util.inspect(
+              context.stack
+                .flatMap((item) =>
+                  item instanceof JCCDictRule ? item.comments : ""
+                )
+                .filter(Boolean),
+              { depth: 2, compact: false, colors: true }
+            )
+        );
 
-      while (stack.length) {
-        // console.log(stack.map((item) => item.id));
-        const item = stack.pop()!;
+        const item = context.stack.pop()!;
         const rules = dict.findByTokenId(item.id);
 
+        // Use rule validations
+        if (item instanceof JCCDictRule) {
+          context.use(item);
+        }
+
         if (!rules.length) {
-          stack.push(item); // rollback
+          context.stack.push(item); // rollback
 
           if (!(await shift())) {
             break;
@@ -121,13 +135,13 @@ export const compile: ICommand = (parent) => {
           let lastValidNode: JCCDictNode = node;
 
           // walk rule tree
-          const rollback: (JCCDictRule | ICLexeme)[] = [];
+          const rollback: (JCCDictRule<ICLexeme> | ICLexeme)[] = [];
 
-          while (node && stack.length) {
-            const next = stack.pop()!;
+          while (node && context.stack.length) {
+            const next = context.stack.pop()!;
 
             if (!node.has(next.id)) {
-              stack.push(next);
+              context.stack.push(next);
               break;
             }
 
@@ -136,25 +150,17 @@ export const compile: ICommand = (parent) => {
 
             if (node.rules.includes(rule.id)) {
               lastValidNode = node;
-              rollback.length = 0;
             }
           }
 
-          stack.push(...rollback.reverse());
-
           // rule not matched, rollback the whole stack
           if (!lastValidNode.rules.includes(rule.id)) {
+            context.stack.push(...rollback.reverse());
             continue;
           }
 
-          stack.push(rule);
-          context.update(rule);
+          context.stack.push(rule.build(rollback.reverse().concat(item)));
           matched = true;
-
-          // rule validations
-          if (rule.comments.length > 0) {
-            console.log(rule.comments);
-          }
           break;
         }
 
@@ -163,19 +169,43 @@ export const compile: ICommand = (parent) => {
         }
 
         // Rollback if no rule matched
-        stack.push(item); // rollback
+        context.stack.push(item); // rollback
         if (!(await shift())) {
           break;
         }
       }
 
-      if (stack.length > 1) {
-        reader.raise(
-          `invalid syntax ${JSON.stringify(context.rule?.name ?? "UNKNOWN")}`,
-          {
-            byteStart: context.state.byte,
-          }
-        );
+      // empty file
+      if (!context.stack.length) {
+        return;
+      }
+
+      // invalid syntax
+      if (context.stack.length > 1 || context.stack[0].name !== "STATEMENT") {
+        const lastToken = context.stack[context.stack.length - 1];
+        const lexemes =
+          lastToken instanceof JCCDictRule
+            ? lastToken.getLexemes()
+            : [lastToken];
+        const lexemeValue = lexemes[lexemes.length - 1].value;
+
+        const expectedTokens = dict.findExpected(lastToken.id);
+        const expected = expectedTokens
+          .map((id) => getLexeme(id) || dict.get(id))
+          .map(
+            (item) =>
+              `${
+                item instanceof JCCDictRule
+                  ? item.name.toLowerCase().split("_").join(" ")
+                  : `'${item?.value}'`
+              }`
+          )
+          .join(", ");
+
+        reader.raise(`invalid syntax, expected ${expected}`, {
+          byteStart: reader.state.byte - lexemeValue.length,
+          byteEnd: reader.state.byte - 1,
+        });
       }
     } catch (err) {
       await errorHandler.handle(err);

@@ -1,5 +1,6 @@
-int main(int argc)
-{
-  int a = 1;
-  a += 1;
-}
+int main;
+int main;
+
+int main;
+
+int main();

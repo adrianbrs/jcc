@@ -1,8 +1,8 @@
 import { resolve } from "path";
 import { JCCDict, JCCDictNode, JCCDictRule } from "../../src/modules/dict.ts";
 import { CLexemeType } from "../../src/compilers/clang/lex/interfaces/lexeme-type.interface.ts";
-import { C_KEYWORDS } from "../../src/compilers/clang/lex/tokens/keywords.ts";
-import { C_TOKENS } from "../../src/compilers/clang/lex/tokens/tokens.ts";
+import { C_KEYWORDS } from "../../src/compilers/clang/lex/lexemes/keywords.ts";
+import { C_TOKENS } from "../../src/compilers/clang/lex/lexemes/tokens.ts";
 import { existsSync } from "fs";
 import { readFile } from "fs/promises";
 import os from "os";
@@ -157,6 +157,16 @@ export class DictParser {
     return data;
   }
 
+  readFile(filename: string): Promise<string> {
+    const filepath = resolve(process.cwd(), filename);
+
+    if (!existsSync(filepath)) {
+      throw new Error(`File ${filename} does not exist`);
+    }
+
+    return readFile(filepath, "utf-8");
+  }
+
   parseRules(raw: string): JCCDictRule[] {
     const ruleMap = new Map<number, JCCDictRule>();
     const lines = raw.split(/\n|\r\n/);
@@ -199,13 +209,7 @@ export class DictParser {
   }
 
   async transform(filename: string): Promise<string> {
-    const filepath = resolve(process.cwd(), filename);
-
-    if (!existsSync(filepath)) {
-      throw new Error(`File ${filename} does not exist`);
-    }
-
-    const raw = await readFile(filepath, "utf-8");
+    const raw = await this.readFile(filename);
     const lines = raw.split(/\n|\r\n/);
 
     return lines
@@ -221,14 +225,18 @@ export class DictParser {
       .join(os.EOL);
   }
 
+  async generateEnum(filename: string, name: string): Promise<string> {
+    const raw = await this.readFile(filename);
+    const rules = this.parseRules(raw);
+
+    return `export enum ${name} {
+${rules.map((rule) => `  ${rule.name} = ${rule.id}`).join(",\n")}
+}
+`;
+  }
+
   async parse(filename: string): Promise<JCCDict> {
-    const filepath = resolve(process.cwd(), filename);
-
-    if (!existsSync(filepath)) {
-      throw new Error(`File ${filename} does not exist`);
-    }
-
-    const raw = await readFile(filepath, "utf-8");
+    const raw = await this.readFile(filename);
     const rules = this.parseRules(raw);
 
     return new JCCDict(rules);
