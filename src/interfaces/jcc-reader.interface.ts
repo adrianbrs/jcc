@@ -2,6 +2,7 @@ import { ReadStream } from "fs";
 import { IJCCFileState } from "./jcc-file-state.interface.js";
 import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error.js";
 import { IJCCLogger } from "./jcc-logger.interface.js";
+import { IJCCLexeme } from "./jcc-lex-generator.interface.js";
 
 export interface IJCCReaderOptions {
   /**
@@ -25,6 +26,13 @@ export interface IJCCReaderOptions {
 export interface IJCCReaderLineInfo {
   byteStart: number;
   byteEnd: number;
+}
+
+export interface IJCCReaderErrorOptions extends IJCCErrorOptions {
+  /**
+   * Selected lexemes to highlight.
+   */
+  lexemes?: IJCCLexeme[];
 }
 
 export interface IJCCReader extends AsyncIterableIterator<string> {
@@ -100,18 +108,12 @@ export interface IJCCReader extends AsyncIterableIterator<string> {
   /**
    * Creates a new `JCCError` with the current state of the reader.
    */
-  makeError(
-    message: string,
-    options?: Omit<IJCCErrorOptions, keyof IJCCFileState>
-  ): JCCError;
+  makeError(message: string, options?: IJCCReaderErrorOptions): JCCError;
 
   /**
    * Creates a new `JCCError` with the current state of the reader and throws it.
    *
    * @throws {JCCError}
    */
-  raise(
-    message: string,
-    options?: Omit<IJCCErrorOptions, keyof IJCCFileState>
-  ): never;
+  raise(message: string, options?: IJCCReaderErrorOptions): never;
 }

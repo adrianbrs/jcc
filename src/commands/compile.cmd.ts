@@ -96,6 +96,15 @@ export const compile: ICommand = (parent) => {
         });
       };
 
+      const useToken = (item: ICLexeme | JCCDictRule<ICLexeme>) => {
+        const result = context.use(item);
+        if (result) {
+          for (let i = 0; i < Math.abs(result); i++) {
+            context = result < 0 ? context.exit()! : context.fork();
+          }
+        }
+      };
+
       await shift();
 
       while (context.stack.length) {
@@ -116,6 +125,8 @@ export const compile: ICommand = (parent) => {
         const rules = dict.findByTokenId(item.id);
 
         if (!rules.length) {
+          // Use token
+          useToken(item);
           context.stack.push(item); // rollback
 
           if (!(await shift())) {
@@ -161,12 +172,7 @@ export const compile: ICommand = (parent) => {
 
         if (matched) {
           // Use token
-          const result = context.use(item);
-          if (result) {
-            for (let i = 0; i < Math.abs(result); i++) {
-              context = result < 0 ? context.exit()! : context.fork();
-            }
-          }
+          useToken(item);
           continue;
         }
 

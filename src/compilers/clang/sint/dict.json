@@ -101,12 +101,18 @@
               4003
             ],
             "children": {}
+          },
+          "4006": {
+            "rules": [
+              4003
+            ],
+            "children": {}
           }
         }
       }
     },
     {
-      "id": 4006,
+      "id": 4007,
       "name": "TYPE_PRIMITIVE",
       "comments": [],
       "tree": {
@@ -114,55 +120,55 @@
         "children": {
           "1003": {
             "rules": [
-              4006
+              4007
             ],
             "children": {}
           },
           "1008": {
             "rules": [
-              4006
+              4007
             ],
             "children": {}
           },
           "1012": {
             "rules": [
-              4006
+              4007
             ],
             "children": {}
           },
           "1017": {
             "rules": [
-              4006
+              4007
             ],
             "children": {}
           },
           "1018": {
             "rules": [
-              4006
+              4007
             ],
             "children": {}
           },
           "1022": {
             "rules": [
-              4006
+              4007
             ],
             "children": {}
           },
           "1023": {
             "rules": [
-              4006
+              4007
             ],
             "children": {}
           },
           "1030": {
             "rules": [
-              4006
+              4007
             ],
             "children": {}
           },
           "1031": {
             "rules": [
-              4006
+              4007
             ],
             "children": {}
           }
@@ -189,7 +195,7 @@
               }
             }
           },
-          "4006": {
+          "4007": {
             "rules": [
               4001
             ],
@@ -199,9 +205,11 @@
       }
     },
     {
-      "id": 4007,
+      "id": 4006,
       "name": "FUNCTION_DECLARATION",
-      "comments": [],
+      "comments": [
+        "Verificar se a declaração possui um único identificador"
+      ],
       "tree": {
         "rules": [],
         "children": {
@@ -213,7 +221,7 @@
                 "children": {
                   "4003": {
                     "rules": [
-                      4007
+                      4006
                     ],
                     "children": {}
                   }
@@ -248,7 +256,7 @@
                 ],
                 "children": {}
               },
-              "4007": {
+              "4006": {
                 "rules": [
                   4008
                 ],

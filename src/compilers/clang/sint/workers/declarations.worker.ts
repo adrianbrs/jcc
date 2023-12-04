@@ -96,6 +96,19 @@ export class CSintDeclarationsWorker implements ICSintWorker {
       return;
     }
     const [expression] = rule.getTokens().slice(2) as [JCCDictRule<ICLexeme>];
+
+    // Function initialized like a variable
+    if (this.#current.kind === ICSintDeclarationKind.FUNCTION) {
+      this.ctx.reader.raise(
+        `function '${
+          this.#current.identifier.value
+        }' is initialized like a variable`,
+        {
+          lexemes: [this.#current.identifier],
+        }
+      );
+    }
+
     this.#current.kind = ICSintDeclarationKind.VARIABLE;
     this.#current.assignment = expression;
   }

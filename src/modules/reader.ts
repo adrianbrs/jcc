@@ -1,6 +1,7 @@
 import { ReadStream, createReadStream, existsSync } from "fs";
 import {
   IJCCReader,
+  IJCCReaderErrorOptions,
   IJCCReaderLineInfo,
   IJCCReaderOptions,
 } from "../interfaces/jcc-reader.interface.js";
@@ -68,19 +69,31 @@ export class JCCReader extends EventEmitter implements IJCCReader {
     }
   }
 
-  setLogger(logger?: IJCCLogger | undefined): void {
+  setLogger(logger?: IJCCLogger): void {
     this.#logger = logger;
   }
 
-  makeError(message: string, options?: IJCCErrorOptions | undefined): JCCError {
+  makeError(message: string, options?: IJCCReaderErrorOptions): JCCError {
     const state = this.state;
 
+    let byteStart: number | undefined;
+    let byteEnd: number | undefined;
+
+    if (options?.lexemes?.length) {
+      for (const lexeme of options.lexemes) {
+        if (typeof lexeme.byteStart !== "undefined") {
+          byteStart = Math.min(byteStart ?? lexeme.byteStart, lexeme.byteStart);
+        }
+        if (typeof lexeme.byteEnd !== "undefined") {
+          byteEnd = Math.max(byteEnd ?? lexeme.byteEnd, lexeme.byteEnd);
+        }
+      }
+    }
+
     const [line, column] =
-      typeof options?.byteStart !== "undefined"
+      typeof byteStart !== "undefined"
         ? this.getLineAndColumn(
-            options.byteStart < 0
-              ? state.byte - options.byteStart
-              : options.byteStart
+            byteStart < 0 ? state.byte - byteStart : byteStart
           )
         : [state.line, state.column];
 
@@ -88,6 +101,8 @@ export class JCCReader extends EventEmitter implements IJCCReader {
       state,
       line,
       column,
+      byteStart,
+      byteEnd,
       ...options,
     });
   }

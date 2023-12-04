@@ -37,11 +37,6 @@ export interface IJCCErrorOptions {
    * @default state.byte
    */
   byteEnd?: number;
-
-  /**
-   * Selected lexemes to highlight.
-   */
-  lexemes?: IJCCLexeme[];
 }
 
 export class JCCError extends Error implements IJCCErrorOptions {
@@ -53,40 +48,19 @@ export class JCCError extends Error implements IJCCErrorOptions {
   byteEnd?: number;
   line?: number;
   column?: number;
-  lexemes?: IJCCLexeme[];
 
   constructor(message: string, options?: IJCCErrorOptions) {
     super(message);
     this.name = this.constructor.name;
 
     if (options) {
-      let byteStart: number | undefined;
-      let byteEnd: number | undefined;
-
-      if (options.lexemes?.length) {
-        for (const lexeme of options.lexemes) {
-          if (typeof lexeme.byteStart !== "undefined") {
-            byteStart = Math.min(
-              byteStart ?? lexeme.byteStart,
-              lexeme.byteStart
-            );
-          }
-          if (typeof lexeme.byteEnd !== "undefined") {
-            byteEnd = Math.max(byteEnd ?? lexeme.byteEnd, lexeme.byteEnd);
-          }
-        }
-      }
-
-      byteStart ??= options.state?.byte;
-      byteEnd ??= options.state?.byte;
-
       Object.assign<this, Partial<IJCCErrorOptions>, IJCCErrorOptions>(
         this,
         {
           line: options.state?.line,
           column: options.state?.column,
-          byteStart,
-          byteEnd,
+          byteStart: options.state?.byte,
+          byteEnd: options.state?.byte,
         },
         options
       );
