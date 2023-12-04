@@ -1,3 +1,3 @@
-int a = 2, b, main(), b;
+int a = 1, b = 2;
 
-float main();
+float a;

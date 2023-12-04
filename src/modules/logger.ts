@@ -172,7 +172,7 @@ export class JCCLogger implements IJCCLogger {
         `${relativePath}:${state.line ?? ""}:${state.column ?? ""}`
       ) +
       `${encodingMessage}:` +
-      ` ${lvlMessage}: ` +
+      (level !== JCCLogLevel.LOG ? ` ${lvlMessage}: ` : " ") +
       message;
 
     return message;

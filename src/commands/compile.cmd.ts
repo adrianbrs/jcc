@@ -19,6 +19,8 @@ import { CLexemeType } from "@/compilers/clang/lex/interfaces/lexeme-type.interf
 import { IJCCLexeme } from "@/interfaces/jcc-lex-generator.interface.js";
 import { CSintContext } from "@/compilers/clang/sint/context.js";
 import { getLexeme } from "@/compilers/clang/lex/lexemes/index.js";
+import { CSintRule } from "@/compilers/clang/sint/rules.js";
+import { JCCLogLevel } from "@/interfaces/jcc-logger.interface.js";
 
 interface CompileOptions {
   encoding: BufferEncoding;
@@ -54,7 +56,9 @@ export const compile: ICommand = (parent) => {
       encoding: options.encoding,
     });
 
-    const logger = new JCCLogger(reader);
+    const logger = new JCCLogger(reader, {
+      level: JCCLogLevel.LOG,
+    });
     reader.setLogger(logger);
 
     const errorHandler = new JCCErrorHandler({
@@ -76,14 +80,17 @@ export const compile: ICommand = (parent) => {
       );
 
       let context = new CSintContext(reader);
+      const stack: (ICLexeme | JCCDictRule<ICLexeme>)[] = [];
 
-      // const fork = () => {
-      //   context = context.fork();
-      // };
+      const fork = () => {
+        context = context.fork();
+        reader.setContext(context);
+      };
 
-      // const exit = () => {
-      //   context = context.exit()!;
-      // };
+      const exit = () => {
+        context = context.exit()!;
+        reader.setContext(context);
+      };
 
       const shift = async () => {
         return lexGenerator.next().then((res) => {
@@ -91,7 +98,7 @@ export const compile: ICommand = (parent) => {
             return false;
           }
 
-          context.stack.push(res.value);
+          stack.push(res.value);
           return true;
         });
       };
@@ -100,19 +107,22 @@ export const compile: ICommand = (parent) => {
         const result = context.use(item);
         if (result) {
           for (let i = 0; i < Math.abs(result); i++) {
-            context = result < 0 ? context.exit()! : context.fork();
+            result < 0 ? exit() : fork();
           }
         }
+        return result;
       };
 
       await shift();
 
-      while (context.stack.length) {
+      while (stack.length) {
         console.log(
-          context.stack.map((item) => item.name).join(" ") +
+          context.id +
+            ": " +
+            stack.map((item) => item.name).join(" ") +
             " " +
             util.inspect(
-              context.stack
+              stack
                 .flatMap((item) =>
                   item instanceof JCCDictRule ? item.comments : ""
                 )
@@ -121,13 +131,13 @@ export const compile: ICommand = (parent) => {
             )
         );
 
-        const item = context.stack.pop()!;
+        const item = stack.pop()!;
         const rules = dict.findByTokenId(item.id);
 
         if (!rules.length) {
           // Use token
           useToken(item);
-          context.stack.push(item); // rollback
+          stack.push(item); // rollback
 
           if (!(await shift())) {
             break;
@@ -143,11 +153,11 @@ export const compile: ICommand = (parent) => {
           // walk rule tree
           const rollback: (JCCDictRule<ICLexeme> | ICLexeme)[] = [];
 
-          while (node && context.stack.length) {
-            const next = context.stack.pop()!;
+          while (node && stack.length) {
+            const next = stack.pop()!;
 
             if (!node.has(next.id)) {
-              context.stack.push(next);
+              stack.push(next);
               break;
             }
 
@@ -161,36 +171,36 @@ export const compile: ICommand = (parent) => {
 
           // rule not matched, rollback the whole stack
           if (!lastValidNode.rules.includes(rule.id)) {
-            context.stack.push(...rollback.reverse());
+            stack.push(...rollback.reverse());
             continue;
           }
 
-          context.stack.push(rule.build(rollback.reverse().concat(item)));
+          // Use token
+          useToken(item);
+          stack.push(rule.build(rollback.reverse().concat(item)));
           matched = true;
           break;
         }
 
         if (matched) {
-          // Use token
-          useToken(item);
           continue;
         }
 
         // Rollback if no rule matched
-        context.stack.push(item); // rollback
+        stack.push(item); // rollback
         if (!(await shift())) {
           break;
         }
       }
 
       // empty file
-      if (!context.stack.length) {
+      if (!stack.length) {
         return;
       }
 
       // invalid syntax
-      if (context.stack.length > 1 || context.stack[0].name !== "STATEMENT") {
-        const lastToken = context.stack[context.stack.length - 1];
+      if (stack.length > 1 || stack[0].id !== CSintRule.STATEMENT) {
+        const lastToken = stack[stack.length - 1];
         const lexemes =
           lastToken instanceof JCCDictRule
             ? lastToken.getLexemes()

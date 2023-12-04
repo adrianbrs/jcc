@@ -33,6 +33,11 @@ export function readLineRange(
           }
         }
       }
+
+      if (line) {
+        lines.push(line);
+        line = "";
+      }
     };
 
     const resolve = () => {

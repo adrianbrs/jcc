@@ -8,7 +8,8 @@ import {
 import { IJCCFileState } from "@/interfaces/jcc-file-state.interface.js";
 import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error.js";
 import EventEmitter from "events";
-import { IJCCLogger } from "@/interfaces/jcc-logger.interface.js";
+import { IJCCLogger, JCCLogLevel } from "@/interfaces/jcc-logger.interface.js";
+import { IJCCContext } from "@/interfaces/jcc-context.interface.js";
 
 export class JCCReader extends EventEmitter implements IJCCReader {
   private readonly _state: IJCCFileState = {
@@ -21,6 +22,7 @@ export class JCCReader extends EventEmitter implements IJCCReader {
   #readStream: ReadStream;
   #lineMap = new Map<number, IJCCReaderLineInfo>();
   #logger?: IJCCLogger;
+  #context?: IJCCContext;
   #closed = false;
 
   get state() {
@@ -73,6 +75,10 @@ export class JCCReader extends EventEmitter implements IJCCReader {
     this.#logger = logger;
   }
 
+  setContext(context?: IJCCContext): void {
+    this.#context = context;
+  }
+
   makeError(message: string, options?: IJCCReaderErrorOptions): JCCError {
     const state = this.state;
 
@@ -108,6 +114,12 @@ export class JCCReader extends EventEmitter implements IJCCReader {
   }
 
   raise(message: string, options?: IJCCErrorOptions | undefined): never {
+    const fn = this.#context?.getCurrentFunction();
+
+    if (fn) {
+      this.logger?.log(JCCLogLevel.LOG, `In function '${fn.value}':`);
+    }
+
     throw this.makeError(message, options);
   }
 

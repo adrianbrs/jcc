@@ -49,6 +49,12 @@
                       4002
                     ],
                     "children": {}
+                  },
+                  "4005": {
+                    "rules": [
+                      4002
+                    ],
+                    "children": {}
                   }
                 }
               }
@@ -60,17 +66,25 @@
     {
       "id": 4004,
       "name": "DECLARATION_ASSIGNMENT",
-      "comments": [],
+      "comments": [
+        "Para imitar o comportamento do compilador C"
+      ],
       "tree": {
         "rules": [],
         "children": {
-          "4005": {
+          "4006": {
             "rules": [],
             "children": {
               "3011": {
                 "rules": [],
                 "children": {
                   "4003": {
+                    "rules": [
+                      4004
+                    ],
+                    "children": {}
+                  },
+                  "4005": {
                     "rules": [
                       4004
                     ],
@@ -97,12 +111,6 @@
             "children": {}
           },
           "4002": {
-            "rules": [
-              4003
-            ],
-            "children": {}
-          },
-          "4006": {
             "rules": [
               4003
             ],
@@ -205,7 +213,7 @@
       }
     },
     {
-      "id": 4006,
+      "id": 4005,
       "name": "FUNCTION_DECLARATION",
       "comments": [
         "Verificar se a declaração possui um único identificador"
@@ -221,7 +229,7 @@
                 "children": {
                   "4003": {
                     "rules": [
-                      4006
+                      4005
                     ],
                     "children": {}
                   }
@@ -234,6 +242,48 @@
     },
     {
       "id": 4008,
+      "name": "FUNCTION_DEFINITION",
+      "comments": [],
+      "tree": {
+        "rules": [],
+        "children": {
+          "3001": {
+            "rules": [],
+            "children": {
+              "3000": {
+                "rules": [],
+                "children": {
+                  "4005": {
+                    "rules": [
+                      4008
+                    ],
+                    "children": {}
+                  }
+                }
+              },
+              "4009": {
+                "rules": [],
+                "children": {
+                  "3000": {
+                    "rules": [],
+                    "children": {
+                      "4005": {
+                        "rules": [
+                          4008
+                        ],
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4009,
       "name": "STATEMENT",
       "comments": [],
       "tree": {
@@ -241,35 +291,41 @@
         "children": {
           "3009": {
             "rules": [
-              4008
+              4009
             ],
             "children": {
               "4003": {
                 "rules": [
-                  4008
+                  4009
                 ],
                 "children": {}
               },
               "4004": {
                 "rules": [
-                  4008
+                  4009
                 ],
                 "children": {}
               },
-              "4006": {
+              "4005": {
                 "rules": [
-                  4008
+                  4009
                 ],
                 "children": {}
               }
             }
           },
           "4008": {
+            "rules": [
+              4009
+            ],
+            "children": {}
+          },
+          "4009": {
             "rules": [],
             "children": {
-              "4008": {
+              "4009": {
                 "rules": [
-                  4008
+                  4009
                 ],
                 "children": {}
               }
@@ -279,7 +335,7 @@
       }
     },
     {
-      "id": 4005,
+      "id": 4006,
       "name": "EXPRESSION",
       "comments": [],
       "tree": {
@@ -287,37 +343,37 @@
         "children": {
           "2000": {
             "rules": [
-              4005
+              4006
             ],
             "children": {}
           },
           "2001": {
             "rules": [
-              4005
+              4006
             ],
             "children": {}
           },
           "2002": {
             "rules": [
-              4005
+              4006
             ],
             "children": {}
           },
           "2003": {
             "rules": [
-              4005
+              4006
             ],
             "children": {}
           },
           "3005": {
             "rules": [],
             "children": {
-              "4005": {
+              "4006": {
                 "rules": [],
                 "children": {
                   "3004": {
                     "rules": [
-                      4005
+                      4006
                     ],
                     "children": {}
                   }

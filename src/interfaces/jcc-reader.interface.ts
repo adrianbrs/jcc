@@ -3,6 +3,7 @@ import { IJCCFileState } from "./jcc-file-state.interface.js";
 import { IJCCErrorOptions, JCCError } from "@/errors/jcc.error.js";
 import { IJCCLogger } from "./jcc-logger.interface.js";
 import { IJCCLexeme } from "./jcc-lex-generator.interface.js";
+import { IJCCContext } from "./jcc-context.interface.js";
 
 export interface IJCCReaderOptions {
   /**
@@ -41,11 +42,17 @@ export interface IJCCReader extends AsyncIterableIterator<string> {
   readonly encoding: BufferEncoding;
   readonly logger?: IJCCLogger;
   readonly closed: boolean;
+  readonly context?: IJCCContext;
 
   /**
    * Sets the logger to use.
    */
   setLogger(logger?: IJCCLogger): void;
+
+  /**
+   * Sets the current context.
+   */
+  setContext(context?: IJCCContext): void;
 
   /**
    * Returns information about the given line.\

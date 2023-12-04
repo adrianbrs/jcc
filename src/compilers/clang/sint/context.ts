@@ -7,6 +7,7 @@ import {
   ICSintWorkerConstructor,
 } from "./interfaces/worker.interface.js";
 import { workers } from "./workers/index.js";
+import { CSintFunctionsWorker } from "./workers/functions.worker.js";
 
 export class CSintContext
   extends JCCContext<ICLexeme, CSintContext>
@@ -24,6 +25,13 @@ export class CSintContext
     for (const Worker of workers) {
       this.#workers.set(Worker, new Worker(this));
     }
+  }
+
+  getCurrentFunction(): ICLexeme | null {
+    return (
+      this.getWorker(CSintFunctionsWorker).getCurrent()?.declaration
+        .identifier ?? null
+    );
   }
 
   use(token: ICLexeme | JCCDictRule<ICLexeme>): number {

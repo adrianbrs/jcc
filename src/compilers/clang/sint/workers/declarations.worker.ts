@@ -11,8 +11,23 @@ import { CSintRule } from "../rules.js";
 import { C_TOKENS } from "../../lex/lexemes/tokens.js";
 
 export class CSintDeclarationsWorker implements ICSintWorker {
+  readonly tokens = new Set<number>([
+    CSintRule.DECLARATION,
+    CSintRule.SINGLE_DECLARATION,
+    CSintRule.MULTIPLE_DECLARATION,
+    CSintRule.DECLARATION_ASSIGNMENT,
+    CSintRule.FUNCTION_DECLARATION,
+    CSintRule.STATEMENT,
+    C_TOKENS.get(";").id,
+    C_TOKENS.get("{").id,
+  ]);
+
   #declarations = new Map<number, ICSintDeclaration>();
   #current?: ICSintDeclaration;
+
+  get current() {
+    return this.#current;
+  }
 
   constructor(readonly ctx: CSintContext) {}
 
@@ -43,6 +58,7 @@ export class CSintDeclarationsWorker implements ICSintWorker {
     if (prevSelfDeclaration) {
       // Kind mismatch
       if (prevSelfDeclaration.kind !== kind) {
+        console.log("prev", prevSelfDeclaration, this.#current);
         this.ctx.reader.raise(
           `'${identifier.value}' redeclared as different kind of symbol`,
           {
@@ -74,7 +90,8 @@ export class CSintDeclarationsWorker implements ICSintWorker {
       }
     }
 
-    this.#declarations.set(identifier.key!, this.#current);
+    this.#declarations.set(identifier.key!, { ...this.#current });
+    this.#current.kind = undefined;
   }
 
   useSingle(rule: JCCDictRule<ICLexeme>): void {
@@ -139,12 +156,28 @@ export class CSintDeclarationsWorker implements ICSintWorker {
         this.useFunction(token as JCCDictRule<ICLexeme>);
         break;
       case C_TOKENS.get(";").id:
+      case C_TOKENS.get("{").id:
       case CSintRule.STATEMENT:
         this.validateAndStore();
         this.#current = undefined;
         break;
     }
     return 0;
+  }
+
+  getIdentifier(rule: JCCDictRule<ICLexeme>): ICLexeme | undefined {
+    switch (rule.id) {
+      case CSintRule.SINGLE_DECLARATION:
+        return this.parseSingle(rule).identifier!;
+      case CSintRule.MULTIPLE_DECLARATION:
+        const [identifier] = rule.getTokens().slice(2) as ICLexeme[];
+        return identifier;
+      case CSintRule.DECLARATION_ASSIGNMENT:
+      case CSintRule.DECLARATION:
+      case CSintRule.FUNCTION_DECLARATION:
+        return this.getIdentifier(rule.getToken(0));
+    }
+    return undefined;
   }
 
   has(key: number, onlySelf: boolean = false): boolean {

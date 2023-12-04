@@ -1,7 +1,6 @@
 import { IJCCContext } from "@/interfaces/jcc-context.interface.js";
 import { IJCCFileState } from "@/interfaces/jcc-file-state.interface.js";
 import { IJCCLexeme } from "@/interfaces/jcc-lex-generator.interface.js";
-import { JCCDictRule } from "./dict.js";
 import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
 import util from "util";
 
@@ -13,7 +12,6 @@ export abstract class JCCContext<
   #state: IJCCFileState;
   #id: number = 0;
   #prev: U | null = null;
-  #stack: (T | JCCDictRule<T>)[] = [];
 
   get id() {
     return this.#id;
@@ -21,10 +19,6 @@ export abstract class JCCContext<
 
   get state() {
     return this.#state;
-  }
-
-  get stack() {
-    return this.#stack;
   }
 
   constructor(
@@ -42,6 +36,7 @@ export abstract class JCCContext<
   }
 
   abstract fork(): U;
+  abstract getCurrentFunction(): T | null;
 
   exit(): U | null {
     const prev = this.#prev;
@@ -52,9 +47,6 @@ export abstract class JCCContext<
   toJSON(): Record<string, any> {
     return {
       state: this.#state,
-      stack: this.#stack.map((item) =>
-        "toJSON" in item ? item.toJSON() : item
-      ),
       prev: this.#prev?.toJSON(),
     };
   }
