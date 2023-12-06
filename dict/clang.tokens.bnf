@@ -50,6 +50,7 @@
 4009 ::= 4012 # STATEMENT_BLOCK ::= LOOP_DEFINITION
 4009 ::= 4009 4009 # STATEMENT_BLOCK ::= STATEMENT_BLOCK STATEMENT_BLOCK
 
+# Verificar se está dentro de um loop, ou switch no caso do break
 4011 ::= 1005 3009 # LOOP_STATEMENT ::= continue ;
 4011 ::= 1001 3009 # LOOP_STATEMENT ::= break ;
 

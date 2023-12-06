@@ -421,7 +421,9 @@
     {
       "id": 4011,
       "name": "LOOP_STATEMENT",
-      "comments": [],
+      "comments": [
+        "Verificar se está dentro de um loop, ou switch no caso do break"
+      ],
       "tree": {
         "rules": [],
         "children": {

@@ -50,6 +50,7 @@ STATEMENT_BLOCK ::= LOOP_STATEMENT
 STATEMENT_BLOCK ::= LOOP_DEFINITION
 STATEMENT_BLOCK ::= STATEMENT_BLOCK STATEMENT_BLOCK
 
+# Verificar se está dentro de um loop, ou switch no caso do break
 LOOP_STATEMENT ::= continue ;
 LOOP_STATEMENT ::= break ;
 
