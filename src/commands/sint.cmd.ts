@@ -20,6 +20,7 @@ import util from "util";
 
 interface CompileOptions {
   encoding: BufferEncoding;
+  showTokens: boolean;
 }
 
 export const compile: ICommand = (parent) => {
@@ -33,6 +34,12 @@ export const compile: ICommand = (parent) => {
     "-e, --encoding <encoding>",
     "Encoding of source code file",
     "utf-8"
+  );
+
+  cmd.option(
+    "-t, --show-tokens",
+    "Show tokens generated shift-reduce parser",
+    false
   );
 
   cmd.action(async (filepath: string, options: CompileOptions) => {
@@ -101,20 +108,22 @@ export const compile: ICommand = (parent) => {
       await shift();
 
       while (stack.length) {
-        console.log(
-          context.id +
-            ": " +
-            stack.map((item) => item.name).join(" ") +
-            " " +
-            util.inspect(
-              stack
-                .flatMap((item) =>
-                  item instanceof JCCDictRule ? item.comments : ""
-                )
-                .filter(Boolean),
-              { depth: 2, compact: false, colors: true }
-            )
-        );
+        if (options.showTokens) {
+          console.log(
+            context.id +
+              ": " +
+              stack.map((item) => item.name).join(" ") +
+              " " +
+              util.inspect(
+                stack
+                  .flatMap((item) =>
+                    item instanceof JCCDictRule ? item.comments : ""
+                  )
+                  .filter(Boolean),
+                { depth: 2, compact: false, colors: true }
+              )
+          );
+        }
 
         const item = stack.pop()!;
         const rules = dict.findByTokenId(item.id);
