@@ -4,5 +4,6 @@ import { ICSintDeclaration } from "./declaration.interface.js";
 
 export interface ICSintFunctionDefinition {
   declaration: ICSintDeclaration;
+  defined?: boolean;
   body?: JCCDictRule<ICLexeme>;
 }

@@ -1,7 +1,8 @@
 {
   "files.associations": {
     "*.ejs": "html",
-    "stdalign.h": "c"
+    "stdalign.h": "c",
+    "stdio.h": "c"
   },
   "javascript.preferences.importModuleSpecifierEnding": "js",
   "typescript.preferences.importModuleSpecifierEnding": "js"

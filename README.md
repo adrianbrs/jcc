@@ -181,3 +181,19 @@ Example:
 5001 r_brace "}" [examples/ExemploParaTabelaDeIdentificadores.c:26:6]
 5001 r_brace "}" [examples/ExemploParaTabelaDeIdentificadores.c:27:2]
 ```
+
+### Syntax analisys
+
+```bash
+> jcc sint --help
+Usage: jcc sint [options] <filepath>
+
+Perform syntactic analysis on the source file
+
+Arguments:
+  filepath                   Path to source code file
+
+Options:
+  -e, --encoding <encoding>  Encoding of source code file (default: "utf-8")
+  -h, --help                 display help for command
+```

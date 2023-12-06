@@ -14,16 +14,20 @@ export class CSintFunctionsWorker implements ICSintWorker {
   readonly tokens = new Set<number>([
     CSintRule.FUNCTION_DECLARATION,
     C_TOKENS.get("{").id,
+    C_TOKENS.get(";").id,
+    C_TOKENS.get(",").id,
     CSintRule.FUNCTION_DEFINITION,
   ]);
 
-  private _declarationsWorker = this.ctx.getWorker(CSintDeclarationsWorker);
+  get current() {
+    return this.#current;
+  }
 
   constructor(readonly ctx: CSintContext) {}
 
   useFunctionDeclaration(): void {
     this.#current = {
-      declaration: this._declarationsWorker.current!,
+      declaration: this.ctx.getWorker(CSintDeclarationsWorker).current!,
     };
     return;
   }
@@ -44,6 +48,15 @@ export class CSintFunctionsWorker implements ICSintWorker {
         }
       );
     }
+
+    // Nested function definition error
+    if (this.ctx.id > 0) {
+      this.ctx.reader.raise("nested function definitions are not allowed", {
+        lexemes: [declaration.identifier],
+      });
+    }
+
+    this.#current.defined = true;
   }
 
   useFunctionDefinition(token: JCCDictRule<ICLexeme>): void {
@@ -75,6 +88,13 @@ export class CSintFunctionsWorker implements ICSintWorker {
       case CSintRule.FUNCTION_DEFINITION:
         this.useFunctionDefinition(token as JCCDictRule<ICLexeme>);
         break;
+      case C_TOKENS.get(";").id:
+      case C_TOKENS.get(",").id:
+        // Function not defined, remove current at the end of the declaration
+        if (this.#current && !this.#current.defined) {
+          this.#current = undefined;
+        }
+        break;
     }
 
     return 0;
@@ -96,10 +116,10 @@ export class CSintFunctionsWorker implements ICSintWorker {
     );
   }
 
-  getCurrent(): ICSintFunctionDefinition | undefined {
+  getCurrent(includeSelf = false): ICSintFunctionDefinition | undefined {
     return (
-      this.#current ??
-      this.ctx.prev()?.getWorker(CSintFunctionsWorker).getCurrent()
+      (includeSelf ? this.#current : null) ??
+      this.ctx.prev()?.getWorker(CSintFunctionsWorker).getCurrent(true)
     );
   }
 }

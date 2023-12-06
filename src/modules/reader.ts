@@ -113,7 +113,7 @@ export class JCCReader extends EventEmitter implements IJCCReader {
     });
   }
 
-  raise(message: string, options?: IJCCErrorOptions | undefined): never {
+  raise(message: string, options?: IJCCReaderErrorOptions | undefined): never {
     const fn = this.#context?.getCurrentFunction();
 
     if (fn) {

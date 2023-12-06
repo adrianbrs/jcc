@@ -51,7 +51,7 @@ export class CSintDeclarationsWorker implements ICSintWorker {
     }
 
     this.#current.kind ??= ICSintDeclarationKind.VARIABLE;
-    const { type, identifier, kind } = this.#current;
+    const { type, identifier, kind, assignment } = this.#current;
     const prevSelfDeclaration = this.get(identifier.key!, true);
 
     // Redeclaration
@@ -84,9 +84,16 @@ export class CSintDeclarationsWorker implements ICSintWorker {
         }
       } else {
         // Local scope
-        this.ctx.reader.raise(`redeclaration of '${identifier.value}'`, {
-          lexemes: [identifier],
-        });
+
+        if (assignment) {
+          this.ctx.reader.raise(`redefinition of '${identifier.value}'`, {
+            lexemes: [identifier],
+          });
+        } else {
+          this.ctx.reader.raise(`redeclaration of '${identifier.value}'`, {
+            lexemes: [identifier],
+          });
+        }
       }
     }
 

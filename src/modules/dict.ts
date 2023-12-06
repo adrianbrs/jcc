@@ -1,5 +1,6 @@
 import { getDepth } from "@/helpers/tree.js";
 import { IJCCLexeme } from "@/interfaces/jcc-lex-generator.interface.js";
+import util from "util";
 
 export interface IJCCDictNodeJSON {
   rules: number[];
@@ -11,6 +12,7 @@ export interface IJCCDictRuleJSON {
   name: string;
   comments: string[];
   tree: IJCCDictNodeJSON;
+  tokens?: (IJCCLexeme | IJCCDictRuleJSON)[];
 }
 
 export interface IJCCDictJSON {
@@ -70,6 +72,20 @@ export class JCCDictRule<T extends IJCCLexeme = IJCCLexeme> {
     return this.#lexemes;
   }
 
+  getFirstLexeme(): T {
+    const firstToken = this.getFirstToken();
+    return firstToken instanceof JCCDictRule
+      ? firstToken.getFirstLexeme()
+      : firstToken;
+  }
+
+  getLastLexeme(): T {
+    const lastToken = this.getLastToken();
+    return lastToken instanceof JCCDictRule
+      ? lastToken.getLastLexeme()
+      : lastToken;
+  }
+
   getTokens<U extends T | JCCDictRule<T>>(): U[] {
     return [...this.#tokens] as U[];
   }
@@ -92,6 +108,11 @@ export class JCCDictRule<T extends IJCCLexeme = IJCCLexeme> {
       name: this.name,
       comments: this.comments,
       tree: this.tree.toJSON(),
+      ...(this.#tokens?.length && {
+        tokens: this.#tokens.map((token) =>
+          "toJSON" in token ? token.toJSON() : token
+        ),
+      }),
     };
   }
 
@@ -103,6 +124,10 @@ export class JCCDictRule<T extends IJCCLexeme = IJCCLexeme> {
     );
     rule.comments.push(...json.comments);
     return rule;
+  }
+
+  [util.inspect.custom](depth: number, options: util.InspectOptionsStylized) {
+    return util.inspect(this.toJSON(), { depth, ...options });
   }
 }
 
@@ -126,7 +151,7 @@ export class JCCDict<T extends IJCCLexeme = IJCCLexeme>
   }
 
   findExpected(id: number): number[] {
-    const expected: number[] = [];
+    const expected = new Set<number>();
 
     const stack: [number, JCCDictNode][] = this.rules.map((rule) => [
       rule.id,
@@ -140,14 +165,14 @@ export class JCCDict<T extends IJCCLexeme = IJCCLexeme>
         if (key === 2) {
           console.log(node);
         }
-        expected.push(key);
+        expected.add(key);
         continue;
       }
 
       stack.push(...node.entries());
     }
 
-    return expected;
+    return Array.from(expected);
   }
 
   [Symbol.iterator](): IterableIterator<JCCDictRule<T>> {
