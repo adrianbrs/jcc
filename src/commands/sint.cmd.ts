@@ -11,14 +11,11 @@ import { JCCLexGenerator } from "@/modules/lex-generator.js";
 import { JCCLogger } from "@/modules/logger.js";
 import { JCCReader } from "@/modules/reader.js";
 import { ICLexeme } from "@/compilers/clang/lex/interfaces/lexeme.interface.js";
-import { IJCCFileState } from "@/interfaces/jcc-file-state.interface.js";
-import { IJCCReader } from "@/interfaces/jcc-reader.interface.js";
-import { IJCCLexeme } from "@/interfaces/jcc-lex-generator.interface.js";
 import { CSintContext } from "@/compilers/clang/sint/context.js";
 import { getLexeme } from "@/compilers/clang/lex/lexemes/index.js";
 import { CSintRule } from "@/compilers/clang/sint/rules.js";
 import { JCCLogLevel } from "@/interfaces/jcc-logger.interface.js";
-import clangDictionary from "@/compilers/clang/sint/dict.json";
+import clangDictionary from "@/compilers/clang/sint/dict.json" assert { type: "json" };
 import util from "util";
 
 interface CompileOptions {
