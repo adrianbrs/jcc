@@ -182,7 +182,7 @@ Example:
 5001 r_brace "}" [examples/ExemploParaTabelaDeIdentificadores.c:27:2]
 ```
 
-### Syntax analisys
+### Syntax analysis
 
 ```bash
 > jcc sint --help
@@ -196,4 +196,28 @@ Arguments:
 Options:
   -e, --encoding <encoding>  Encoding of source code file (default: "utf-8")
   -h, --help                 display help for command
+```
+
+#### Example
+
+Uncomment some errors in the [example file](examples/example.c) and run the syntax analyzer to view the error messages.
+
+```bash
+> npm run sint:example
+0: int []
+0: TYPE_PRIMITIVE []
+0: TYPE []
+0: TYPE identifier []
+0: SINGLE_DECLARATION []
+0: DECLARATION []
+0: DECLARATION equal []
+0: DECLARATION equal number_literal []
+0: DECLARATION equal EXPRESSION []
+0: DECLARATION_ASSIGNMENT []
+...
+0: STATEMENT DECLARATION []
+0: STATEMENT DECLARATION semicolon []
+examples/example.c:7:7(utf-8): error: conflicting types for 'a'; have 'float'
+7 | float a;
+  |       ^
 ```
